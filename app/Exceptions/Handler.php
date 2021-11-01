@@ -2,12 +2,16 @@
 
 namespace App\Exceptions;
 
+use ErrorException;
 use Exception;
 
 use Throwable;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Validation\ValidationException;
+
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\Filesystem\Exception\InvalidArgumentException;
 
 class Handler extends ExceptionHandler
 {
@@ -17,18 +21,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
-    ];
 
-    /**
-     * A list of the inputs that are never flashed for validation exceptions.
-     *
-     * @var array
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
     ];
 
     /**
@@ -42,11 +35,16 @@ class Handler extends ExceptionHandler
             $this->renderable(function (ModelNotFoundException $e, $request) {
                 return Response::json(['error' => $e->getMessage()]);
             });
-            $this->renderable(function (Exception $e, $request) {
-                return Response::json(['error' => $e->getMessage()],$e->getCode());
+            $this->renderable(function (ValidationException $e, $request) {
+                return Response::json(['error' => $e->getMessage(), 'details' => $e->errors()], 422);
             });
-            //
+            $this->renderable(function (ErrorException $e, $request) {
+                return Response::json(['error' => $e->getMessage()], $e->getCode());
+            });
+            $this->renderable(function (Exception $e, $request) {
+                return Response::json(['error' => $e->getMessage()], $e->getCode());
+            });
+
         });
-        
     }
 }

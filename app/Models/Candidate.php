@@ -48,6 +48,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Candidate extends Model
 {
+    protected $with = ['positions'];
+    protected $hidden = ['created_at','updated_at'];
     const COURSES = [
         'first stage 1',
         'first stage 2',
@@ -77,5 +79,11 @@ class Candidate extends Model
         'declined',
         'next'
     ];
+
+    public function positions()
+    {
+        return $this->belongsToMany(Position::class,'candidates_positions');
+    }
+
     use HasFactory;
 }

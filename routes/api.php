@@ -18,7 +18,9 @@ use App\Http\Controllers\CandidateController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-Route::get('/candidates', [CandidateController::class, 'index']);
+Route::post('/candidates', [CandidateController::class, 'index']);
 Route::post('/candidate', [CandidateController::class, 'store']);
 Route::put('/candidate/{id}',[CandidateController::class, 'update']);
 Route::post('/candidates/search',[CandidateController::class, 'search']);
+Route::post('/candidates/filter',[CandidateController::class, 'filter']);
+Route::post('/candidates/import',[CandidateController::class, 'import']);

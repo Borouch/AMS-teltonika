@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 class Academy extends Model
 {
     const ACADEMIES = [
-        ['name' => 'Business to business', 'abbreviation' => 'b2b'],
+        ['name' => 'Business to business', 'abbreviation' => 'B2B'],
         ['name' => 'Internet of things', 'abbreviation' => 'IoT']
     ];
     use HasFactory;

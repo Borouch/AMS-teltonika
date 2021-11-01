@@ -2,19 +2,14 @@
 
 namespace App\Http\Requests;
 
-use Exception;
 use App\Models\Academy;
-use App\Models\Position;
-use App\Models\Candidate;
 use Illuminate\Validation\Rule;
-use App\Models\EducationInstitution;
 use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
-use InvalidArgumentException;
 
-class CandidateStoreRequest extends FormRequest
+class CandidateIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,12 +28,13 @@ class CandidateStoreRequest extends FormRequest
      */
     public function rules()
     {
-
-        return ValidationUtilities::CandidateStoreValidationRules($this->input('academy'));
-    }
-    public function messages()
-    {
-        return ValidationUtilities::customMessages();
+        $academies = Academy::all();
+        $names = $academies->map(fn ($academy) => $academy->name);
+        $names_abv = $academies->map(fn ($academy) => $academy->abbreviation);
+        return [
+            'academy_name' => 'nullable|regex:/^[ a-zA-Ž]*$/|' . Rule::in($names),
+            'academy_name_abbreviation' => 'nullable|alpha_num|' . Rule::in($names_abv)
+        ];
     }
     protected function failedValidation(Validator $validator)
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
@@ -34,11 +35,6 @@ class CandidateSearchRequest extends FormRequest
     }
     protected function failedValidation(Validator $validator)
     {
-        $errors = $validator->errors();
-        $response = response()->json([
-            'error' => 'Invalid data sent',
-            'details' => $errors->messages(),
-        ]);
-        throw new ValidationException($validator, $response);
+        ValidationUtilities::failedValidation($validator);
     }
 }

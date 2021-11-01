@@ -25,8 +25,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Position extends Model
 {
+    protected $hidden = ['created_at','updated_at','pivot'];
     const ACADEMIES_POSITIONS = [
-        'b2b' =>
+        'B2B' =>
         [
             'Negotiation skills',
             'Sales techniques',
@@ -43,5 +44,9 @@ class Position extends Model
             'electronics engineering'
         ],
     ];
+    public function candidates()
+    {
+        $this->belongsToMany(Candidate::class, 'candidates_positions');
+    }
     use HasFactory;
 }
