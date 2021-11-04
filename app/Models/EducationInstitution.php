@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|EducationInstitution query()
  * @method static \Illuminate\Database\Eloquent\Builder|EducationInstitution whereName($value)
  * @mixin \Eloquent
+ * @property int $id
+ * @method static \Illuminate\Database\Eloquent\Builder|EducationInstitution whereId($value)
  */
 class EducationInstitution extends Model
 {

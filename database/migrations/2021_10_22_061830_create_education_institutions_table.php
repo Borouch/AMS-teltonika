@@ -14,7 +14,8 @@ class CreateEducationInstitutionsTable extends Migration
     public function up()
     {
         Schema::create('education_institutions', function (Blueprint $table) {
-            $table->string('name')->primary();
+            $table->id();
+            $table->string('name')->unique();
         });
     }
 

@@ -34,10 +34,10 @@ class CandidateFactory extends Factory
             'phone' => $this->faker->numerify('86#######'),
             'email' => $this->faker->email(),
             'application_date' => $this->faker->dateTimeBetween('-1 month'),
-            'education_institution' => $this->faker->randomElement($institutions)->name,
+            'education_institution_id' => $this->faker->randomElement($institutions),
             'city' => $this->faker->city(),
             'course' => $this->faker->randomElement($courses),
-            'academy' => $this->faker->randomElement($academies)->name,
+            'academy_id' => $this->faker->randomElement($academies),
             //
         ];
     }

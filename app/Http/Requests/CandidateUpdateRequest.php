@@ -34,18 +34,19 @@ class CandidateUpdateRequest extends FormRequest
         $institutions = $institutions->map(fn ($institution): string => $institution->name);
         $academies = Academy::all();
         $academies = $academies->map(fn ($academy): string => $academy->name);;
+        
         if ($this->filled('academy')) {
-            $positions = Position::all()->where('academy', '=', $this->input('academy'));
+            $academy = Academy::where('name','=',$this->input('academy'))->first();
         } else {
-            $academy = Candidate::findOrFail($candidateId)->academy;
-            $positions = Position::all()->where('academy', '=', $academy);
+            $academy = Candidate::findOrFail($candidateId)->academy()->get()->first();
         }
+        $positions = $academy->positions()->get();
         $positionsNames = $positions->map(fn ($position) => $position->name);
         return [
             'name' => 'nullable|alpha',
             'surnname' => 'nullable|alpha',
             'gender' => 'nullable|' . Rule::in(Candidate::GENDERS),
-            'phone' => 'nullable|regex:/^([\+][0-9]*)$/|min:9',
+            'phone' => 'nullable|regex:/^([\+]{0,1}[0-9]*)$/|min:9',
             'positions.*' => 'nullable|distinct|' . Rule::in($positionsNames),
             'email' => 'nullable|email',
             'application_date' => 'nullable|date_format:Y-m-d',

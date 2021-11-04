@@ -20,12 +20,29 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Academy whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Academy whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Candidate[] $candidates
+ * @property-read int|null $candidates_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Position[] $positions
+ * @property-read int|null $positions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Academy whereId($value)
  */
 class Academy extends Model
 {
+    protected $hidden = ['created_at','updated_at'];
+
     const ACADEMIES = [
         ['name' => 'Business to business', 'abbreviation' => 'B2B'],
         ['name' => 'Internet of things', 'abbreviation' => 'IoT']
     ];
     use HasFactory;
+
+    public function positions()
+    {
+        return $this->belongsToMany(Position::class,'academies_positions');
+    }
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
 }

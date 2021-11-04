@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAcademiesTable extends Migration
+class CreateAcademiesPositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateAcademiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('academies', function (Blueprint $table) {
+        Schema::create('academies_positions', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('abbreviation')->nullable();
+            $table->foreignId('position_id')->references('id')->on('positions');
+            $table->foreignId('academy_id')->references('id')->on('academies');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateAcademiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('academies');
+        Schema::dropIfExists('academies_positions');
     }
 }

@@ -24,16 +24,13 @@ class ValidationUtilities
     {
         return ['positions.*.in' => 'Input position is invalid as it does not belong to the academy to which candidate is applying'];
     }
-    public static function CandidateStoreValidationRules($academy)
+    public static function CandidateStoreValidationRules($academyName)
     {
         $institutions = EducationInstitution::all();
         $institutions = $institutions->map(fn ($institution): string => $institution->name);
-        $academies = Academy::all();
-        $academies = $academies->map(fn ($academy): string => $academy->name);;
-        $positions = Position::all();
-        if ($academy != null) {
-            $positions = $positions->where('academy', '=', $academy);
-        }
+        $academy = Academy::where('name','=',$academyName)->first();
+        $positions = $academy->positions()->get();
+        $academies = Academy::all()->map(fn ($academy): string => $academy->name);
         $positionsNames = $positions->map(fn ($position) => $position->name);
         return [
             'name' => 'required|alpha',
@@ -45,10 +42,10 @@ class ValidationUtilities
             'city' => 'required|alpha',
             'course' => 'required|' . Rule::in(Candidate::COURSES),
             'academy' => 'required|' . Rule::in($academies),
-            'can_manage_data' => 'required|'.Rule::in(['true','false']),
+            'can_manage_data' => 'required|boolean',
             'positions.*' => 'required|distinct|' . Rule::in($positionsNames),
             'status' => 'nullable|'.Rule::in(Candidate::STATUSES),
-            'comment' => 'nullable|alpha_num|1000',
+            'comment' => 'nullable|regex:/^( [a-žA-Ž0-9\.\,\?\!]*)$^|1000',
             'phone' => 'nullable|regex:/^([\+]{0,1}[0-9]*)$/|min:9',
             'CV' => 'nullable|max:10000|mimes:pdf',
 

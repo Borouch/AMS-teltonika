@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Model;
+use App\Models\Academy;
 use App\Models\Position;
 use App\Models\Candidate;
 use App\Models\CandidatesPositions;
@@ -25,7 +26,9 @@ class CandidatesPositionsFactory extends Factory
     public function definition()
     {
         $candidates = Candidate::all();
-        $positions = Position::all();
+        $candidate=$this->faker->randomElement($candidates);
+        $academy = Academy::find($candidate->academy_id);
+        $positions = $academy->positions()->get();
         return [
             'position_id'=>$this->faker->randomElement($positions)->id,
             'candidate_id'=>$this->faker->randomElement($candidates)->id,

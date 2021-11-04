@@ -5,8 +5,9 @@ namespace Database\Seeders;
 use App\Models\Academy;
 use App\Models\Position;
 use App\Models\Candidate;
-use App\Models\CandidatesPositions;
 use Illuminate\Database\Seeder;
+use App\Models\AcademiesPositions;
+use App\Models\CandidatesPositions;
 use App\Models\EducationInstitution;
 
 class DatabaseSeeder extends Seeder
@@ -22,10 +23,20 @@ class DatabaseSeeder extends Seeder
         Academy::insert($academies);
         $academiesPositions = Position::ACADEMIES_POSITIONS;
         foreach ($academiesPositions as $academyAbv => $positions) {
-            $academyName = Academy::where('abbreviation', '=', $academyAbv)->first()->name;
-            $positions = array_map(fn ($position): array => ['name' => $position, 'academy' => $academyName], $positions);
+            $academyId = Academy::where('abbreviation', '=', $academyAbv)->first()->id;
+            $positions = array_map(fn ($position): array => ['name' => $position], $positions);
             Position::insert($positions);
+            foreach ($positions as $position)
+            {
+                $positionId = Position::where('name','=', $position['name'])->first()->id;
+                $acPos = new AcademiesPositions();
+                $acPos -> position_id = $positionId;
+                $acPos -> academy_id = $academyId;
+                $acPos->save();
+            }
         }
+
+
         $institutions = EducationInstitution::EDUCATION_INSTITUTIONS;
         $institutions = array_map(
             fn ($institution): array =>

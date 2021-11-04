@@ -18,9 +18,7 @@ class CandidatesImport implements WithHeadingRow
     public static function validateCandidates(Collection $candidates)
     {
         $candidates = $candidates->map(function ($row) {
-            $row['positions'] = array_map(fn ($position) => rtrim($position), explode('; ', $row['positions']));
-            $row['application_date']= date("Y-m-d", strtotime($row['application_date']));
-            $row['can_manage_data'] = strtolower($row['can_manage_data']);
+            CandidatesImport::prepareForValidation($row);
             CandidatesImport::validationFields($row);
             return [
                 'name' => $row['name'],
@@ -32,8 +30,8 @@ class CandidatesImport implements WithHeadingRow
                 'education_institution' => $row['education_institution'],
                 'course' => $row['course'],
                 'city' => $row['city'],
-                'status'=>$row['status'],
-                'positions'=>$row['positions'],
+                'status' => $row['status'],
+                'positions' => $row['positions'],
                 'can_manage_data' => $row['can_manage_data'],
                 'comment' => $row['comment'],
                 'academy' => $row['academy'],
@@ -51,5 +49,17 @@ class CandidatesImport implements WithHeadingRow
             ValidationUtilities::CandidateStoreValidationRules($academy),
             ValidationUtilities::customMessages()
         )->validate();
+    }
+    private static function prepareForValidation(&$row)
+    {
+        $row['positions'] = array_map(fn ($position) => rtrim($position), explode('; ', $row['positions']));
+        $row['application_date'] = date("Y-m-d", strtotime($row['application_date']));
+        $row['can_manage_data'] = strtolower($row['can_manage_data']);
+        if ($row['can_manage_data'] != null) {
+
+            $row['can_manage_data'] = strtolower($row['can_manage_data']);
+            $row['can_manage_data'] = filter_var($row['can_manage_data'], FILTER_VALIDATE_BOOLEAN);
+        }
+        return $row;
     }
 }

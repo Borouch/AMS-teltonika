@@ -28,14 +28,30 @@ class CandidateIndexRequest extends FormRequest
      */
     public function rules()
     {
-        $academies = Academy::all();
-        $names = $academies->map(fn ($academy) => $academy->name);
-        $names_abv = $academies->map(fn ($academy) => $academy->abbreviation);
+
         return [
-            'academy_name' => 'nullable|regex:/^[ a-zA-Ž]*$/|' . Rule::in($names),
-            'academy_name_abbreviation' => 'nullable|alpha_num|' . Rule::in($names_abv)
+            'should_group_by_academy' => 'nullable|boolean',
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        if ($this->get('should_group_by_academy') != null) {
+
+            $shouldGroupByAcademy= strtolower($this->get('should_group_by_academy'));
+            $shouldGroupByAcademy= filter_var($shouldGroupByAcademy, FILTER_VALIDATE_BOOLEAN);
+            $this->merge([
+                'should_group_by_academy' => $shouldGroupByAcademy,
+
+            ]);
+        }
+    }
+
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);

@@ -17,32 +17,32 @@ class CandidateController extends Controller
 {
     public function index(CandidateIndexRequest $request)
     {
-        $request->validated();
+
         return Candidateservice::indexCandidates($request);
     }
     public function store(CandidateStoreRequest $request)
     {
-        $request->validated();
+        
         return response()->json(CandidateService::storeCandidate($request),200);
     }
     public function update(CandidateUpdateRequest $request, $candidateId)
     {
-        $request->validated();
         return CandidateService::updateCandidate($request, $candidateId);
     }
     public function search(CandidateSearchRequest $request)
     {   
-        $request->validated();
         return CandidateService::searchCandidates($request);
     }
     public function filter(CandidateFilterRequest $request)
     {
-        $request->validated();
         return CandidateService::filterCandidates($request); 
     }
     public function import(CandidateImportRequest $request)
     {
-        $request->validated();
         return CandidateService::importCandidates($request); 
+    }
+    public function export(Request $request)
+    {
+        return CandidateService::exportCandidates($request);
     }
 }

@@ -21,15 +21,12 @@ class CreateCandidatesTable extends Migration
             $table->string('phone')->nullable();
             $table->string('email');
             $table->date('application_date');
-            $table->string('education_institution');
-            $table->foreign('education_institution')->references('name')->on('education_institutions');
+            $table->foreignId('education_institution_id')->references('id')->on('education_institutions');
             $table->string('city');
             $table->string('status')->default('candidate');
             $table->string('course');
-            $table->string('academy');
-            $table->foreign('academy')->references('name')->on('academies');
-            $table->string('comment',1000)->default('');
-            $table->string('CV')->default('');
+            $table->foreignId('academy_id')->references('id')->on('academies');
+            $table->string('CV')->nullable();
             $table->timestamps();
         });
     }

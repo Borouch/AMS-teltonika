@@ -2,17 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Exception;
-use App\Models\Academy;
-use App\Models\Position;
-use App\Models\Candidate;
-use Illuminate\Validation\Rule;
-use App\Models\EducationInstitution;
 use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use InvalidArgumentException;
+
 
 class CandidateStoreRequest extends FormRequest
 {
@@ -43,5 +36,19 @@ class CandidateStoreRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);
+    }
+
+
+    protected function prepareForValidation()
+    {
+        if ($this->get('can_manage_data') != null) {
+
+            $canManageData= strtolower($this->get('can_manage_data'));
+            $canManageData= filter_var($canManageData, FILTER_VALIDATE_BOOLEAN);
+            $this->merge([
+                'can_manage_data' => $canManageData,
+
+            ]);
+        }
     }
 }

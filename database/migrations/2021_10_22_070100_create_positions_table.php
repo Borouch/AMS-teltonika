@@ -15,10 +15,8 @@ class CreatePositionsTable extends Migration
     {
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('abbreviation')->nullable()->default(null)->change();;
-            $table->string('academy');
-            $table->foreign('academy')->references('name')->on('academies') ;
             $table->timestamps();
         });
     }

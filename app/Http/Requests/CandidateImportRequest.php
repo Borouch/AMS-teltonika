@@ -28,4 +28,5 @@ class CandidateImportRequest extends FormRequest
             'candidates_data' => 'required|mimes:csv,txt'
         ];
     }
+    
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\CandidateController;
 
 /*
@@ -24,3 +25,13 @@ Route::put('/candidate/{id}',[CandidateController::class, 'update']);
 Route::post('/candidates/search',[CandidateController::class, 'search']);
 Route::post('/candidates/filter',[CandidateController::class, 'filter']);
 Route::post('/candidates/import',[CandidateController::class, 'import']);
+Route::get('/candidates/export',[CandidateController::class, 'export']);
+Route::get('/academies',[AcademyController::class, 'index']);
+try
+{
+   // $response = $academy->save();
+   Route::post('/academy',[AcademyController::class, 'store']);
+}catch (Throwable $e)
+{
+    var_dump([$e->getMessage()]);
+}
