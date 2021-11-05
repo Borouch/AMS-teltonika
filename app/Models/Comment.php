@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\CandidateComment
  *
  * @property int $id
  * @property string $comment
@@ -21,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|CandidateComment whereId($value)
  * @mixin \Eloquent
  */
-class CandidateComment extends Model
+class Comment extends Model
 {
     use HasFactory;
 }

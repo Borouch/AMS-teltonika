@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Comment;
 use App\Models\CandidateComment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -95,7 +96,7 @@ class Candidate extends Model
     }
     public function comments()
     {
-        return $this->hasMany(CandidateComment::class);
+        return $this->hasMany(Comment::class);
     }
     public function education_institution()
     {
@@ -104,9 +105,6 @@ class Candidate extends Model
     public function academy()
     {
         return $this->belongsTo(Academy::class);
-    }
-    public function getTableColumns() {
-        return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
     }
 
     use HasFactory;

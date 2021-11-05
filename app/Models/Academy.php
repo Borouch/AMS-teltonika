@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Academy extends Model
 {
-    protected $hidden = ['created_at','updated_at'];
+    protected $hidden = ['created_at','updated_at','pivot'];
 
     const ACADEMIES = [
         ['name' => 'Business to business', 'abbreviation' => 'B2B'],

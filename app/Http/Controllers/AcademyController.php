@@ -6,7 +6,9 @@ use Throwable;
 use App\Models\Academy;
 use Illuminate\Http\Request;
 use App\Services\AcademyService;
+use App\Http\Requests\AcademyGetRequest;
 use App\Http\Requests\AcademyStoreRequest;
+use App\Http\Requests\IndexAcademyPositionsRequest;
 
 class AcademyController extends Controller
 {
@@ -18,5 +20,9 @@ class AcademyController extends Controller
     {
         $request->validated();
         return AcademyService::storeAcademy($request);
+    }
+    public function academyWithPositions(Request $request, $id)
+    {
+        return AcademyService::getAcademyWithPositions($id);
     }
 }

@@ -16,6 +16,7 @@ class CreateEducationInstitutionsTable extends Migration
         Schema::create('education_institutions', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->timestamps();
         });
     }
 

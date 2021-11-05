@@ -5,6 +5,7 @@ namespace App\Services;
 use Exception;
 use Throwable;
 use App\Models\Academy;
+use App\Models\Comment;
 use App\Models\Position;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ use App\Models\EducationInstitution;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\String\Exception\InvalidArgumentException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CandidateService
 {
@@ -110,29 +112,37 @@ class CandidateService
 
             $candidate->status = $status;
         }
-        if ($comment != null) {
-            $candidateComment = new CandidateComment();
-            $candidateComment->comment=$comment;
-            $candidateComment->save();
-        }
         if ($CV != null) {
             $candidate->CV = $CV;
         }
-
         $candidate->save();
+        $candidateId = Candidate::all()->last()->id;
+        if ($comment != null) {
+            $comment = new Comment();
+            $comment->content=$comment;
+            $comment->candidate_id=$candidateId;
+            $comment->save();
+        }
         $positions = CandidateService::getStoreFieldInput($dataSource, 'positions');
-        CandidateService::storeCandidatePosition($positions, Candidate::all()->last()->id);
+        CandidateService::storeCandidatePosition($positions, $candidateId);
         return ['message' => 'Candidate saved succesfully', 'candidate' => Candidate::all()->last()];
     }
 
     public static function updateCandidate(Request $request, $candidateId)
     {
-        $candidate = Candidate::findOrFail($candidateId);
+        try
+        {
+            $candidate = Candidate::findOrFail($candidateId);
+        }catch(Throwable $e)
+        {
+            //Rethrown in order to be catched by handler
+            throw new NotFoundHttpException(message: $e->getMessage(),code: 404);
+        }
+    
         $hasValue = false;
         if ($request->filled('name')) {
             $hasValue = true;
             $candidate->update(['name'=>$request->input('name')]);
-            // $candidate->name = $request->input('name');
         }
         if ($request->filled('surnname')) {
             $hasValue = true;
@@ -166,7 +176,7 @@ class CandidateService
             $candidate->update(['academy_id'=> Academy::where('name','=',$newAcName)->first()->id]);
             
             #reassigned in order to newly assigned academy to be shown
-            $candidate =Candidate::findOrFail($candidateId);
+            $candidate =Candidate::find($candidateId);
         }
         if ($request->filled('positions')) {
             $hasValue = true;
@@ -175,7 +185,7 @@ class CandidateService
             CandidateService::storeCandidatePosition($request->get('positions'), $candidate->id);
 
             #reassigned in order to newly supplied positions to be shown
-            $candidate =Candidate::findOrFail($candidateId);
+            $candidate =Candidate::find($candidateId);
         }
         if ($request->filled('email')) {
             $hasValue = true;
@@ -305,6 +315,20 @@ class CandidateService
 
         return response()->json(['candidates' => $candidates], 200);
     }
+    public static function exportCV($candidateId)
+    {
+        $candidate = Candidate::find($candidateId);
+        if($candidate==null)
+        {
+            throw new Exception('Candidate with such id does not exist',404);
+        }
+        if($candidate->CV==null)
+        {
+            throw new Exception('Candidate does not have a CV',404);
+        }
+        return response()->download(storage_path('app/'.$candidate->CV));
+        
+    }
     public static function exportCandidates(Request $request)
     {
 
@@ -322,4 +346,5 @@ class CandidateService
             $candidatePosition->save();
         }
     }
+
 }

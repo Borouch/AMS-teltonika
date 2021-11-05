@@ -45,4 +45,8 @@ class CandidateController extends Controller
     {
         return CandidateService::exportCandidates($request);
     }
+    public function exportCV(Request $request,$candidateId)
+    {
+        return CandidateService::exportCV($candidateId);
+    }       
 }

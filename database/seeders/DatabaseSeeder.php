@@ -24,16 +24,9 @@ class DatabaseSeeder extends Seeder
         $academiesPositions = Position::ACADEMIES_POSITIONS;
         foreach ($academiesPositions as $academyAbv => $positions) {
             $academyId = Academy::where('abbreviation', '=', $academyAbv)->first()->id;
-            $positions = array_map(fn ($position): array => ['name' => $position], $positions);
+            $positions = array_map(fn ($position): array => ['name' => $position,'created_at'=>date('Y-m-d H:i:s')], $positions);
             Position::insert($positions);
-            foreach ($positions as $position)
-            {
-                $positionId = Position::where('name','=', $position['name'])->first()->id;
-                $acPos = new AcademiesPositions();
-                $acPos -> position_id = $positionId;
-                $acPos -> academy_id = $academyId;
-                $acPos->save();
-            }
+            $this->storeAcademyPositions($positions,$academyId);
         }
 
 
@@ -46,5 +39,16 @@ class DatabaseSeeder extends Seeder
         EducationInstitution::insert($institutions);
         Candidate::factory(5)->create();
         CandidatesPositions::factory(10)->create();
+    }
+    private function storeAcademyPositions($positions,$academyId)
+    {
+        foreach ($positions as $position)
+        {
+            $positionId = Position::where('name','=', $position['name'])->first()->id;
+            $acPos = new AcademiesPositions();
+            $acPos -> position_id = $positionId;
+            $acPos -> academy_id = $academyId;
+            $acPos->save();
+        }
     }
 }
