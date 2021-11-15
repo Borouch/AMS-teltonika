@@ -9,12 +9,14 @@ use App\Models\Comment;
 use App\Models\Position;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Exports\CandidatesExport;
 use App\Imports\CandidatesImport;
 use Illuminate\Support\Facades\DB;
 use App\Models\CandidatesPositions;
 use App\Models\EducationInstitution;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CandidateService
@@ -130,7 +132,7 @@ class CandidateService
         $candidate->save();
         $candidateId = Candidate::all()->last()->id;
         if ($comment != null) {
-            CommentService::saveComment($comment,$candidateId);
+            CommentService::saveComment($comment, $candidateId);
         }
         $positions = self::getStoreFieldInput($dataSource, 'positions');
         self::storeCandidatePosition($positions, $candidateId);
@@ -182,7 +184,7 @@ class CandidateService
             $currentAc = $candidate->academy->get()->first();
             //When changing academies current positions that candidate applies are deleted
             if ($newAcName != $currentAc->name) {
-                self::deleteCandidateRelationItems($candidate,'positions');
+                self::deleteCandidateRelationItems($candidate, 'positions');
             }
             $candidate->update(['academy_id' => Academy::where('name', '=', $newAcName)->first()->id]);
 
@@ -192,7 +194,7 @@ class CandidateService
         if ($request->filled('positions')) {
             $hasValue = true;
 
-            self::deleteCandidateRelationItems($candidate,'positions');
+            self::deleteCandidateRelationItems($candidate, 'positions');
             self::storeCandidatePosition($request->get('positions'), $candidate->id);
 
             #reassigned in order for newly supplied positions to be shown
@@ -231,7 +233,7 @@ class CandidateService
      * @param String $relation
      * @return void
      */
-    public static function deleteCandidateRelationItems($candidate,$relation)
+    public static function deleteCandidateRelationItems($candidate, $relation)
     {
         foreach ($candidate->$relation as $relationElement) {
             $$relationElement->pivot->delete();
@@ -320,6 +322,11 @@ class CandidateService
         $count = $candidates->count();
         return response()->json(['message' => " $count candidates found that match search query fields ", 'candidates' => $candidates], 200);
     }
+    /**
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public static function importCandidates(Request $request)
     {
         $path = $request->file('candidates_data')->store('temp');
@@ -337,6 +344,11 @@ class CandidateService
 
         return response()->json(['candidates' => $candidates], 200);
     }
+    /**
+     * @param mixed $candidateId
+     * 
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public static function exportCV($candidateId)
     {
         $candidate = Candidate::find($candidateId);
@@ -348,11 +360,13 @@ class CandidateService
         }
         return response()->download(storage_path('app/' . $candidate->CV));
     }
-    public static function exportCandidates(Request $request)
+    public static function exportCandidates()
     {
+        $fileName = now()->format("Y-m-d H:i:s") . '.xlsx';
+        $response = Excel::download(new CandidatesExport, $fileName);
 
-        $fileName = date("Y-m-d H:i:s") . '.xlsx';
-        return Excel::download(new CandidatesExport(), $fileName);
+        $response->prepare(Request::createFromGlobals());
+        return $response;
     }
     public static function storeCandidatePosition($positions, $candidateId)
     {

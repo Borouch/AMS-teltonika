@@ -2,48 +2,67 @@
 
 namespace App\Exports;
 
+use Exception;
+use App\Models\Position;
 use App\Models\Candidate;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Size;
 
-class CandidatesExport implements FromCollection,WithHeadings
+class CandidatesExport implements WithHeadings, FromArray
 {
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function collection()
+    public function array(): array
     {
-        $candidates = Candidate::all()->map(
-            function ($candidate) {
-                $candidate->education_institution= $candidate->education_institution()->get()->first()->name;
-                $candidate->academy= $candidate->academy()->get()->first()->name;
-
-                $positions = $candidate->positions;
-                $candidate->positions=$this->aggregatePositions($positions);
-                return $candidate;
+        $candidates = Candidate::all()->toArray();
+        $candidates = array_map(function ($candidate) {
+            $positionsExport = Position::all()->mapWithKeys(fn ($pos) => [$pos->name => '0'])->toArray();
+            $candPos = $candidate['positions'];
+            foreach ($candPos  as $pos) {
+                $positionsExport[$pos['name']] = '1';
             }
-        );
+            $positionsExportValues = [];
+            foreach ($positionsExport as $key => $value) {
+                array_push($positionsExportValues, $value);
+            }
+            $comments = $candidate['comments'];
+            $comments = array_map(fn ($c) => $c['content'], $comments);
+            $aggComment = $this->aggregateComments($comments);
+            return [
+                $candidate['id'],
+                $candidate['name'],
+                $candidate['surnname'],
+                $candidate['gender'],
+                $candidate['phone'],
+                $candidate['email'],
+                $candidate['application_date'],
+                $candidate['city'],
+                $candidate['status'],
+                $candidate['course'],
+                $candidate['education_institution']['name'],
+                $candidate['academy']['name'],
+                $candidate['CV'],
+                $candidate['can_manage_data'],
+                $aggComment,
+                ...$positionsExportValues
+            ];
+        }, $candidates);
         return $candidates;
     }
-    public function aggregatePositions($positions):string
+
+    public function aggregateComments($comments): string
     {
-        $aggregatedPositions="";
-        for($i =0;$i<count($positions);$i++)
-        {
-            $position = $positions[$i]->name;
-            $aggregatedPositions.=$position;
-            if($i+1 != count($positions))
-            {
-                $aggregatedPositions.='; ';
+        $aggregatedContent = "";
+        for ($i = 0; $i < count($comments); $i++) {
+            $content = $comments[$i];
+            $aggregatedContent .= $content;
+            if ($i + 1 != count($comments)) {
+                $aggregatedContent .= '; ';
             }
-            
         }
-        return $aggregatedPositions;
+        return $aggregatedContent;
     }
     public function headings(): array
     {
+        $pNames = Position::all()->map(fn ($p) => $p->name)->toArray();
         return [
             'id',
             'name',
@@ -55,11 +74,12 @@ class CandidatesExport implements FromCollection,WithHeadings
             'city',
             'status',
             'course',
-            'CV',
             'education_institution',
             'academy',
-            'positions',
+            'CV',
+            'can_manage_data',
             'comment',
+            ...$pNames,
         ];
     }
 }

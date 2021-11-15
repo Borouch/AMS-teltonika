@@ -21,7 +21,7 @@ class CandidateController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(CandidateIndexRequest $request,$shouldGroupByAcademy=null)
+    public function index(CandidateIndexRequest $request, $shouldGroupByAcademy = null)
     {
 
         return Candidateservice::indexCandidates($shouldGroupByAcademy);
@@ -33,8 +33,8 @@ class CandidateController extends Controller
      */
     public function store(CandidateStoreRequest $request)
     {
-        
-        return response()->json(CandidateService::storeCandidate($request),200);
+
+        return response()->json(CandidateService::storeCandidate($request), 200);
     }
     /**
      * @param CandidateUpdateRequest $request
@@ -52,7 +52,7 @@ class CandidateController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function search(CandidateSearchRequest $request)
-    {   
+    {
         return CandidateService::searchCandidates($request);
     }
     /**
@@ -62,7 +62,7 @@ class CandidateController extends Controller
      */
     public function filter(CandidateFilterRequest $request)
     {
-        return CandidateService::filterCandidates($request); 
+        return CandidateService::filterCandidates($request);
     }
     /**
      * @param CandidateImportRequest $request
@@ -71,8 +71,9 @@ class CandidateController extends Controller
      */
     public function import(CandidateImportRequest $request)
     {
-        return CandidateService::importCandidates($request); 
+        return CandidateService::importCandidates($request);
     }
+
     /**
      * @param Request $request
      * 
@@ -80,16 +81,18 @@ class CandidateController extends Controller
      */
     public function export(Request $request)
     {
+
         return CandidateService::exportCandidates($request);
     }
+
     /**
      * @param Request $request
      * @param int $candidateId
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function exportCV(Request $request,$candidateId)
+    public function exportCV(Request $request, $candidateId)
     {
         return CandidateService::exportCV($candidateId);
-    }       
+    }
 }

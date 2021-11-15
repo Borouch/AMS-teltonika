@@ -20,9 +20,7 @@ use App\Http\Controllers\EducationInstitutionController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::get('/candidates/export',[CandidateController::class, 'export']);
 Route::get('/candidates/{should_group_by_academy?}', [CandidateController::class, 'index']);
 Route::post('/candidate', [CandidateController::class, 'store']);
 Route::put('/candidate/{id}',[CandidateController::class, 'update']);
@@ -30,7 +28,6 @@ Route::post('/candidates/search',[CandidateController::class, 'search']);
 Route::post('/candidates/filter',[CandidateController::class, 'filter']);
 Route::post('/candidates/import',[CandidateController::class, 'import']);
 Route::get('/candidate/exportCV/{id}',[CandidateController::class, 'exportCV']);
-Route::get('/candidates/export',[CandidateController::class, 'export']);
 
 Route::get('/academies',[AcademyController::class, 'index']);
 Route::post('/academy',[AcademyController::class, 'store']);
