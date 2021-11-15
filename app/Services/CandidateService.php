@@ -9,28 +9,27 @@ use App\Models\Comment;
 use App\Models\Position;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
-use App\Models\CandidateComment;
 use App\Exports\CandidatesExport;
 use App\Imports\CandidatesImport;
-use App\Models\CandidateComments;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\CandidatesPositions;
 use App\Models\EducationInstitution;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\String\Exception\InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CandidateService
 {
-    public static function indexCandidates(Request $request)
+    /**
+     * @param null|string $shouldGroupByAcademy
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public static function indexCandidates($shouldGroupByAcademy)
     {
 
         $candidates = Candidate::all();
-        $shoudGroupByAcademy = $request->input('should_group_by_academy');
 
-        if ($shoudGroupByAcademy) {
+        if ($shouldGroupByAcademy == 1) {
             $groupedCandidates = [];
             $academies = Academy::all();
             foreach ($academies as $ac) {
@@ -38,7 +37,7 @@ class CandidateService
                 array_push($groupedCandidates, $group);
             }
             foreach ($candidates as $candidate) {
-                $groupedCandidates = CandidateService::addCandidateToGroup($groupedCandidates, $candidate);
+                $groupedCandidates = self::addCandidateToGroup($groupedCandidates, $candidate);
             }
             return response()->json(['grouped candidates' => $groupedCandidates], 200);
         }
@@ -46,6 +45,12 @@ class CandidateService
         return response()->json(['candidates' => $candidates], 200);
     }
 
+    /**
+     * @param array $groupedCandidates
+     * @param Collection $candidate
+     * 
+     * @return array
+     */
     public static function addCandidateToGroup($groupedCandidates, $candidate)
     {
         $academy = Academy::find($candidate->academy_id);
@@ -70,40 +75,47 @@ class CandidateService
                 if ($dataSource->hasfile('CV') != null) {
                     return $dataSource->file('CV')->store('CVs');
                 } else return null;
+            } else {
+                return $dataSource->input($inputField);
             }
-            return $dataSource->input($inputField);
         } else {
             return $dataSource[$inputField];
         }
     }
+    /**
+     * @param Request|null $request
+     * @param array|null $candidateData
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public static function storeCandidate(Request $request = null, array $candidateData = null)
     {
 
         $dataSource = $candidateData != null ? $candidateData : $request;
         $candidate = new Candidate();
-        $canManageData = CandidateService::getStoreFieldInput($dataSource, 'can_manage_data');
-        $candidate->name = CandidateService::getStoreFieldInput($dataSource, 'name');
-        $candidate->surnname =  CandidateService::getStoreFieldInput($dataSource, 'surnname');
-        $candidate->email =  CandidateService::getStoreFieldInput($dataSource, 'email');
-        if (!$canManageData) {
+        $canManageData = self::getStoreFieldInput($dataSource, 'can_manage_data');
+        $candidate->name = self::getStoreFieldInput($dataSource, 'name');
+        $candidate->surnname =  self::getStoreFieldInput($dataSource, 'surnname');
+        $candidate->email =  self::getStoreFieldInput($dataSource, 'email');
+        if ($canManageData != '1') {
             return [
                 'message' => 'Candidate could not be saved as can_manage_data is false', 'candidate' => $candidate
             ];
         }
-        $candidate->gender =  CandidateService::getStoreFieldInput($dataSource, 'gender');
-        $candidate->application_date =  CandidateService::getStoreFieldInput($dataSource, 'application_date');
-        $education_institution =  CandidateService::getStoreFieldInput($dataSource, 'education_institution');
-        $eduId=EducationInstitution::where('name','=',$education_institution)->first()->id;
-        $candidate->education_institution_id=$eduId;
-        $candidate->city = CandidateService::getStoreFieldInput($dataSource, 'city');
-        $candidate->course =  CandidateService::getStoreFieldInput($dataSource, 'course');
-        $academyName =  CandidateService::getStoreFieldInput($dataSource, 'academy');
+        $candidate->gender =  self::getStoreFieldInput($dataSource, 'gender');
+        $candidate->application_date =  self::getStoreFieldInput($dataSource, 'application_date');
+        $education_institution =  self::getStoreFieldInput($dataSource, 'education_institution');
+        $eduId = EducationInstitution::where('name', '=', $education_institution)->first()->id;
+        $candidate->education_institution_id = $eduId;
+        $candidate->city = self::getStoreFieldInput($dataSource, 'city');
+        $candidate->course =  self::getStoreFieldInput($dataSource, 'course');
+        $academyName =  self::getStoreFieldInput($dataSource, 'academy');
         $acId = Academy::where('name', '=', $academyName)->first()->id;
-        $candidate->academy_id=$acId;
-        $phone = CandidateService::getStoreFieldInput($dataSource, 'phone');
-        $status = CandidateService::getStoreFieldInput($dataSource, 'status');
-        $comment = CandidateService::getStoreFieldInput($dataSource, 'comment');
-        $CV = CandidateService::getStoreFieldInput($dataSource, 'CV');
+        $candidate->academy_id = $acId;
+        $phone = self::getStoreFieldInput($dataSource, 'phone');
+        $status = self::getStoreFieldInput($dataSource, 'status');
+        $comment = self::getStoreFieldInput($dataSource, 'comment');
+        $CV = self::getStoreFieldInput($dataSource, 'CV');
         if ($phone != null) {
 
             $candidate->phone = $phone;
@@ -118,50 +130,50 @@ class CandidateService
         $candidate->save();
         $candidateId = Candidate::all()->last()->id;
         if ($comment != null) {
-            $comment = new Comment();
-            $comment->content=$comment;
-            $comment->candidate_id=$candidateId;
-            $comment->save();
+            CommentService::saveComment($comment,$candidateId);
         }
-        $positions = CandidateService::getStoreFieldInput($dataSource, 'positions');
-        CandidateService::storeCandidatePosition($positions, $candidateId);
+        $positions = self::getStoreFieldInput($dataSource, 'positions');
+        self::storeCandidatePosition($positions, $candidateId);
         return ['message' => 'Candidate saved succesfully', 'candidate' => Candidate::all()->last()];
     }
 
+    /**
+     * @param Request $request
+     * @param int $candidateId
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public static function updateCandidate(Request $request, $candidateId)
     {
-        try
-        {
+        try {
             $candidate = Candidate::findOrFail($candidateId);
-        }catch(Throwable $e)
-        {
+        } catch (Throwable $e) {
             //Rethrown in order to be catched by handler
-            throw new NotFoundHttpException(message: $e->getMessage(),code: 404);
+            throw new NotFoundHttpException(message: $e->getMessage(), code: 404);
         }
-    
+
         $hasValue = false;
         if ($request->filled('name')) {
             $hasValue = true;
-            $candidate->update(['name'=>$request->input('name')]);
+            $candidate->update(['name' => $request->input('name')]);
         }
         if ($request->filled('surnname')) {
             $hasValue = true;
-            $candidate->update(['surnname'=>$request->input('surnname')]);
+            $candidate->update(['surnname' => $request->input('surnname')]);
         }
         if ($request->filled('gender')) {
             $hasValue = true;
-            $candidate->update(['gender'=>$request->input('gender')]);
+            $candidate->update(['gender' => $request->input('gender')]);
         }
         if ($request->filled('phone')) {
             $hasValue = true;
-            $candidate->update(['phone'=>$request->input('phone')]);
+            $candidate->update(['phone' => $request->input('phone')]);
         }
         if ($request->filled('education_institution')) {
             $hasValue = true;
             $edu = $request->input('education_institution');
-            $edu_id = EducationInstitution::where('name','=',$edu)->first()->id;
-            $candidate->update(['education_institution_id'=>$edu_id]);
-
+            $edu_id = EducationInstitution::where('name', '=', $edu)->first()->id;
+            $candidate->update(['education_institution_id' => $edu_id]);
         }
         if ($request->filled('academy')) {
             $hasValue = true;
@@ -169,47 +181,42 @@ class CandidateService
 
             $currentAc = $candidate->academy->get()->first();
             //When changing academies current positions that candidate applies are deleted
-            if($newAcName != $currentAc->name) 
-            {   
-                CandidateService::deleteCandidatePositions($candidate);
-            }   
-            $candidate->update(['academy_id'=> Academy::where('name','=',$newAcName)->first()->id]);
-            
-            #reassigned in order to newly assigned academy to be shown
-            $candidate =Candidate::find($candidateId);
+            if ($newAcName != $currentAc->name) {
+                self::deleteCandidateRelationItems($candidate,'positions');
+            }
+            $candidate->update(['academy_id' => Academy::where('name', '=', $newAcName)->first()->id]);
+
+            #reassigned in order for newly assigned academy to be shown
+            $candidate = Candidate::find($candidateId);
         }
         if ($request->filled('positions')) {
             $hasValue = true;
-            
-            CandidateService::deleteCandidatePositions($candidate);
-            CandidateService::storeCandidatePosition($request->get('positions'), $candidate->id);
 
-            #reassigned in order to newly supplied positions to be shown
-            $candidate =Candidate::find($candidateId);
+            self::deleteCandidateRelationItems($candidate,'positions');
+            self::storeCandidatePosition($request->get('positions'), $candidate->id);
+
+            #reassigned in order for newly supplied positions to be shown
+            $candidate = Candidate::find($candidateId);
         }
         if ($request->filled('email')) {
             $hasValue = true;
-            $candidate->update(['email'=>$request->input('email')]);
+            $candidate->update(['email' => $request->input('email')]);
         }
         if ($request->filled('application_date')) {
             $hasValue = true;
-            $candidate->update(['application_date'=>$request->input('application_date')]);
+            $candidate->update(['application_date' => $request->input('application_date')]);
         }
         if ($request->filled('city')) {
             $hasValue = true;
-            $candidate->update(['city'=>$request->input('city')]);
+            $candidate->update(['city' => $request->input('city')]);
         }
         if ($request->filled('course')) {
             $hasValue = true;
-            $candidate->update(['course'=>$request->input('course')]);
-        }
-        if ($request->filled('comment')) {
-            $hasValue = true;
-            $candidate->update(['comment'=>$request->input('comment')]);
+            $candidate->update(['course' => $request->input('course')]);
         }
         if ($request->hasFile('CV')) {
             $path = $request->file('CV')->store('CVs');
-            $candidate->update(['CV'=>$path]);
+            $candidate->update(['CV' => $path]);
         }
         if (!$hasValue) {
             throw new Exception('All valid input fields are empty', 406);
@@ -219,12 +226,22 @@ class CandidateService
             'candidate' => $candidate
         ], 200);
     }
-    public static function deleteCandidatePositions($candidate)
+    /**
+     * @param Collection $candidate
+     * @param String $relation
+     * @return void
+     */
+    public static function deleteCandidateRelationItems($candidate,$relation)
     {
-        foreach ($candidate->positions as $candidatePosition) {
-            $candidatePosition->pivot->delete();
+        foreach ($candidate->$relation as $relationElement) {
+            $$relationElement->pivot->delete();
         }
     }
+    /**
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public static function searchCandidates(Request $request)
     {
         $hasValue = false;
@@ -252,9 +269,14 @@ class CandidateService
             throw new Exception('All valid search fields are empty', 406);
         }
         $count = $candidates->count();
-        return response()->json(['message' => " $count candidates found that match search query fields ", 'candidates' => $candidates, $candidates->position()->get()], 200);
+        return response()->json(['message' => " $count candidates found that match search query fields ", 'candidates' => $candidates], 200);
     }
 
+    /**
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public static function filterCandidates(Request $request)
     {
         $hasValue = false;
@@ -271,20 +293,20 @@ class CandidateService
         }
         if ($request->filled('positions')) {
             $hasValue = true;
-            $positions = $request->input('positions');
-            $candidates = $candidates->filter(function ($candidate) use ($positions) {
+            $inputPositions = $request->input('positions');
+            $candidates = $candidates->filter(function ($candidate) use ($inputPositions) {
                 $candidatePositions = $candidate->positions()
                     ->get()
                     ->map(fn ($pos) => $pos->name);
-                $count = $candidatePositions->intersect($positions)->count();
+                $count = $candidatePositions->intersect($inputPositions)->count();
                 return $count != 0;
             });
         }
         if ($request->filled('academy')) {
             $hasValue = true;
             $academyName = $request->input('academy');
-            $academyId = Academy::where('name','=',$academyName);
-            $candidates = $candidates->where('academy', '=', $academyId);
+            $academyId = Academy::where('name', '=', $academyName)->first()->id;
+            $candidates = $candidates->where('academy_id', '=', $academyId);
         }
         if ($request->filled('course')) {
             $hasValue = true;
@@ -307,7 +329,7 @@ class CandidateService
         $candidates = CandidatesImport::validateCandidates($candidates[0]);
         $responses = [];
         foreach ($candidates as $candidate) {
-            $response = CandidateService::storeCandidate(candidateData: $candidate);
+            $response = self::storeCandidate(candidateData: $candidate);
             array_push($responses, $response);
         }
         return response()->json($responses, 200);
@@ -318,16 +340,13 @@ class CandidateService
     public static function exportCV($candidateId)
     {
         $candidate = Candidate::find($candidateId);
-        if($candidate==null)
-        {
-            throw new Exception('Candidate with such id does not exist',404);
+        if ($candidate == null) {
+            throw new Exception('Candidate with such id does not exist', 404);
         }
-        if($candidate->CV==null)
-        {
-            throw new Exception('Candidate does not have a CV',404);
+        if ($candidate->CV == null) {
+            throw new Exception('Candidate does not have a CV', 404);
         }
-        return response()->download(storage_path('app/'.$candidate->CV));
-        
+        return response()->download(storage_path('app/' . $candidate->CV));
     }
     public static function exportCandidates(Request $request)
     {
@@ -346,5 +365,4 @@ class CandidateService
             $candidatePosition->save();
         }
     }
-
 }

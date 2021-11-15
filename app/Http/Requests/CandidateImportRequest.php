@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class CandidateImportRequest extends FormRequest
 {
@@ -27,6 +29,10 @@ class CandidateImportRequest extends FormRequest
         return [
             'candidates_data' => 'required|mimes:csv,txt'
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
     }
     
 }

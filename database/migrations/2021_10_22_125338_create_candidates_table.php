@@ -25,6 +25,7 @@ class CreateCandidatesTable extends Migration
             $table->string('city');
             $table->string('status')->default('candidate');
             $table->string('course');
+            $table->string('can_manage_data')->default('1');
             $table->foreignId('academy_id')->references('id')->on('academies');
             $table->string('CV')->nullable();
             $table->timestamps();

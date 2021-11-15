@@ -41,14 +41,5 @@ class CandidateStoreRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        if ($this->get('can_manage_data') != null) {
-
-            $canManageData= strtolower($this->get('can_manage_data'));
-            $canManageData= filter_var($canManageData, FILTER_VALIDATE_BOOLEAN);
-            $this->merge([
-                'can_manage_data' => $canManageData,
-
-            ]);
-        }
     }
 }

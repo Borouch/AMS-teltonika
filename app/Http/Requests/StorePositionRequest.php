@@ -5,7 +5,9 @@ namespace App\Http\Requests;
 use App\Models\Academy;
 use App\Models\Position;
 use Illuminate\Validation\Rule;
+use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class StorePositionRequest extends FormRequest
 {
@@ -35,5 +37,9 @@ class StorePositionRequest extends FormRequest
             
 
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
     }
 }

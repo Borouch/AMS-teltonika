@@ -29,7 +29,7 @@ class CandidateSearchRequest extends FormRequest
         return [
             'name' => 'nullable|alpha',
             'surnname' => 'nullable|alpha',
-            'phone' => 'nullable|regex:/^([\+][0-9]*)$/|min:9',
+            'phone' => 'nullable|regex:/^([\+][0-9]*)$/',
             'email' => 'nullable',
         ];
     }

@@ -4,7 +4,9 @@ namespace App\Http\Requests;
 
 use App\Models\Academy;
 use Illuminate\Validation\Rule;
+use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class AcademyGetRequest extends FormRequest
 {
@@ -29,5 +31,9 @@ class AcademyGetRequest extends FormRequest
         return [
             'academy_name'=>'required|'.Rule::in($acNames)
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
     }
 }

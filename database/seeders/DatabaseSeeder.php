@@ -37,8 +37,8 @@ class DatabaseSeeder extends Seeder
             $institutions
         );
         EducationInstitution::insert($institutions);
-        Candidate::factory(5)->create();
-        CandidatesPositions::factory(10)->create();
+        Candidate::factory(10)->create();
+        CandidatesPositions::factory(20)->create();
     }
     private function storeAcademyPositions($positions,$academyId)
     {

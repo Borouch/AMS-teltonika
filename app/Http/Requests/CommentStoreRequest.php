@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class CommentStoreRequest extends FormRequest
 {
@@ -24,7 +26,12 @@ class CommentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'comment' => 'required|regex:/^([ a-žA-Ž0-9\.\,\?\!]*)$^|1000',
+            'content' => 'required|regex:/^([ a-žA-Ž0-9\.\,\?\!]*)$/|max:1000',
         ];
     }
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
+    }
+    
 }

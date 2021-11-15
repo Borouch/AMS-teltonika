@@ -28,10 +28,12 @@ class CandidatesPositionsFactory extends Factory
         $candidates = Candidate::all();
         $candidate=$this->faker->randomElement($candidates);
         $academy = Academy::find($candidate->academy_id);
+        
         $positions = $academy->positions()->get();
+        $position = $this->faker->randomElement($positions);
         return [
-            'position_id'=>$this->faker->randomElement($positions)->id,
-            'candidate_id'=>$this->faker->randomElement($candidates)->id,
+            'position_id'=>$position->id,
+            'candidate_id'=>$candidate->id,
         ];
     }
 }

@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Position extends Model
 {
-    protected $with = ['academies'];
+    protected $with = [];
     protected $hidden = ['updated_at','pivot'];
     const ACADEMIES_POSITIONS = [
         'B2B' =>

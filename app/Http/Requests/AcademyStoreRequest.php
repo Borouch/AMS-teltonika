@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Models\Academy;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Utilities\ValidationUtilities;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class AcademyStoreRequest extends FormRequest
 {
@@ -32,7 +34,10 @@ class AcademyStoreRequest extends FormRequest
             'abbreviation'=>'nullable|alpha_num|'.Rule::notIn($academiesAbv)
         ];
     }
-
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
+    }
     public function messages()
     {
         return ['name.not_in'=>'Name must be unique',

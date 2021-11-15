@@ -55,7 +55,6 @@ class CandidateUpdateRequest extends FormRequest
             'city' => 'nullable|alpha',
             'course' => 'nullable|' . Rule::in(Candidate::COURSES),
             'academy' => 'nullable|' . Rule::in($academies),
-            'comment' => 'nullable|alpha_num|max:1000',
             'CV' => 'nullable|max:10000|mimes:pdf'
         ];
     }

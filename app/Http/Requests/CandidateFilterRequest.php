@@ -37,7 +37,7 @@ class CandidateFilterRequest extends FormRequest
             'date_from' => 'nullable|date',
             'date_to' => 'nullable|date',
             'positions.*' => 'nullable|distinct|' . Rule::in($positionsNames),
-            'academy' => 'nullable|' . Rule::in($positionsNames),
+            'academy' => 'nullable|' . Rule::in($academies),
             'course' => 'nullable|' . Rule::in(Candidate::COURSES),
         ];
     }

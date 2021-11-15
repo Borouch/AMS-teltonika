@@ -6,9 +6,8 @@ use Throwable;
 use App\Models\Academy;
 use Illuminate\Http\Request;
 use App\Services\AcademyService;
-use App\Http\Requests\AcademyGetRequest;
 use App\Http\Requests\AcademyStoreRequest;
-use App\Http\Requests\IndexAcademyPositionsRequest;
+use App\Services\AcademyStatisticsService;
 
 class AcademyController extends Controller
 {
@@ -24,5 +23,33 @@ class AcademyController extends Controller
     public function academyWithPositions(Request $request, $id)
     {
         return AcademyService::getAcademyWithPositions($id);
+    }
+    public function statByPositions(Request $request, $academyId = null)
+    {
+        return AcademyStatisticsService::getStatByPositions($academyId);
+    }
+    public function statByEducationInstitutions(Request $request, $academyId = null)
+    {
+        return AcademyStatisticsService::getStatByEducationInstitutions($academyId);
+    }
+    public function statByCourses(Request $request, $academyId = null)
+    {
+        return AcademyStatisticsService::getStatByCourses($academyId);
+    }
+    public function statByGenders(Request $request, $academyId = null)
+    {
+        return AcademyStatisticsService::getStatByGenders($academyId);
+    }
+    public function statByStatuses(Request $request, $academyId = null)
+    {
+        return AcademyStatisticsService::getStatByStatuses($academyId);
+    }
+    public function statByApplicationDate(Request $request,$academyId = null)
+    {
+        return AcademyStatisticsService::getStatByApplicationDate($academyId);
+    }
+    public function statByMonth(Request $request, $month,$academyId = null)
+    {
+        return AcademyStatisticsService::getStatByMonth($month,$academyId);
     }
 }

@@ -24,6 +24,11 @@ class ValidationUtilities
     {
         return ['positions.*.in' => 'Input position is invalid as it does not belong to the academy to which candidate is applying'];
     }
+    /**
+     * @param string $academyName
+     * 
+     * @return array
+     */
     public static function CandidateStoreValidationRules($academyName)
     {
         $institutions = EducationInstitution::all();
@@ -38,14 +43,14 @@ class ValidationUtilities
             'gender' => 'required|' . Rule::in(Candidate::GENDERS),
             'email' => 'required|email',
             'application_date' => 'required|date_format:Y-m-d',
-            'education_institution' => 'required|' . Rule::in($institutions),
+            'education_institution' => 'required|'.Rule::in($institutions),
             'city' => 'required|alpha',
             'course' => 'required|' . Rule::in(Candidate::COURSES),
             'academy' => 'required|' . Rule::in($academies),
-            'can_manage_data' => 'required|boolean',
+            'can_manage_data' => 'required|'.Rule::in(['0','1']),
             'positions.*' => 'required|distinct|' . Rule::in($positionsNames),
             'status' => 'nullable|'.Rule::in(Candidate::STATUSES),
-            'comment' => 'nullable|regex:/^( [a-žA-Ž0-9\.\,\?\!]*)$^|1000',
+            'comment' => 'nullable|regex:/^( [a-žA-Ž0-9\.\,\?\!]*)$^|max:1000',
             'phone' => 'nullable|regex:/^([\+]{0,1}[0-9]*)$/|min:9',
             'CV' => 'nullable|max:10000|mimes:pdf',
 

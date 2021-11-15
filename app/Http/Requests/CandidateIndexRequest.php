@@ -30,26 +30,22 @@ class CandidateIndexRequest extends FormRequest
     {
 
         return [
-            'should_group_by_academy' => 'nullable|boolean',
+            'should_group_by_academy' => 'nullable|'.Rule::in(['0','1']),
         ];
     }
 
     /**
-     * Prepare the data for validation.
+     * Get all of the input and files for the request.
      *
-     * @return void
+     * @param  array|mixed|null  $keys
+     * @return array
      */
-    protected function prepareForValidation()
+    public function all($keys = null)
     {
-        if ($this->get('should_group_by_academy') != null) {
+        $data = parent::all();
+        $data['should_group_by_academy'] = $this->route('should_group_by_academy');
 
-            $shouldGroupByAcademy= strtolower($this->get('should_group_by_academy'));
-            $shouldGroupByAcademy= filter_var($shouldGroupByAcademy, FILTER_VALIDATE_BOOLEAN);
-            $this->merge([
-                'should_group_by_academy' => $shouldGroupByAcademy,
-
-            ]);
-        }
+        return $data;
     }
 
     protected function failedValidation(Validator $validator)

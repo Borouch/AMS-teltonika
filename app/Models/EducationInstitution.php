@@ -25,4 +25,9 @@ class EducationInstitution extends Model
         'Vilnius Gediminas technical university'
     ];
     use HasFactory;
+
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
 }
