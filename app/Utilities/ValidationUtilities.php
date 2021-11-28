@@ -3,14 +3,17 @@
 namespace App\Utilities;
 
 use App\Models\Academy;
-use App\Models\Position;
-use App\Models\Candidate;
 use Illuminate\Validation\Rule;
-use App\Models\EducationInstitution;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ValidationUtilities
 {
+    /**
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     *
+     * @return void
+     */
     public static function failedValidation($validator)
     {
         $errors = $validator->errors();
@@ -20,40 +23,33 @@ class ValidationUtilities
         ]);
         throw new ValidationException($validator, $response);
     }
-    public static function customMessages()
+    public static function validateAcademy($acId)
     {
-        return ['positions.*.in' => 'Input position is invalid as it does not belong to the academy to which candidate is applying'];
+        $academies = Academy::all()->map(fn ($academy): string => $academy->id);
+        Validator::make(
+            ['academy_id' => $acId],
+            ['academy_id' => 'required|' . Rule::in($academies)]
+        )->validate();
     }
     /**
-     * @param string $academyName
-     * 
      * @return array
      */
-    public static function CandidateStoreValidationRules($academyName)
+    public static function customMessages()
     {
-        $institutions = EducationInstitution::all();
-        $institutions = $institutions->map(fn ($institution): string => $institution->name);
-        $academy = Academy::where('name','=',$academyName)->first();
-        $positions = $academy->positions()->get();
-        $academies = Academy::all()->map(fn ($academy): string => $academy->name);
-        $positionsNames = $positions->map(fn ($position) => $position->name);
         return [
-            'name' => 'required|alpha',
-            'surnname' => 'required|alpha',
-            'gender' => 'required|' . Rule::in(Candidate::GENDERS),
-            'email' => 'required|email',
-            'application_date' => 'required|date_format:Y-m-d',
-            'education_institution' => 'required|'.Rule::in($institutions),
-            'city' => 'required|alpha',
-            'course' => 'required|' . Rule::in(Candidate::COURSES),
-            'academy' => 'required|' . Rule::in($academies),
-            'can_manage_data' => 'required|'.Rule::in(['0','1']),
-            'positions.*' => 'required|distinct|' . Rule::in($positionsNames),
-            'status' => 'nullable|'.Rule::in(Candidate::STATUSES),
-            'comment' => 'nullable|regex:/^( [a-žA-Ž0-9\.\,\?\!]*)$^|max:1000',
-            'phone' => 'nullable|regex:/^([\+]{0,1}[0-9]*)$/|min:9',
-            'CV' => 'nullable|max:10000|mimes:pdf',
-
+            'positions.*.in' =>
+            'Input position is invalid as it does not belong to the academy to which candidate is applying
+            or such position id doesn\'t exist',
+            'course.in' => 'No course with such id exsits',
+            'academy.in' => 'No academy with such id exists',
+            'can_manage_data.in' => 'Field must be either 0 or 1',
+            'gender.in' => 'No such gender exists',
+            'education_institution_id.in' => 'No education institution with such id exists',
+            'status.in' => "No such status exist",
+            'academies.*.in'=>'No academy with such id exists',
+            'name.not_in'=>'Name must be unique',
+            'abbreviation.not_in'=>"Abbreviation must be unique",
+            'candidate_id.in'=>"No candidate with such id exists",
         ];
     }
 }

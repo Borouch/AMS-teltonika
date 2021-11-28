@@ -30,8 +30,8 @@ class AcademyStoreRequest extends FormRequest
         $academiesNames = Academy::all()->map(fn($academy)=>$academy->name)->toArray();
         $academiesAbv = Academy::all()->map(fn($academy)=>$academy->abbreviation)->toArray();
         return [
-            'name'=>'required|regex:/^[ a-žA-Ž]*$/|'.Rule::notIn($academiesNames),
-            'abbreviation'=>'nullable|alpha_num|'.Rule::notIn($academiesAbv)
+            'name' => 'required|Letter_space|' . Rule::notIn($academiesNames),
+            'abbreviation' => 'nullable|Letter_num_space|' . Rule::notIn($academiesAbv)
         ];
     }
     protected function failedValidation(Validator $validator)
@@ -40,7 +40,6 @@ class AcademyStoreRequest extends FormRequest
     }
     public function messages()
     {
-        return ['name.not_in'=>'Name must be unique',
-        'abbreviation.not_in'=>'Abbreviation must be unique'];
+        return ValidationUtilities::customMessages();
     }
 }

@@ -29,9 +29,13 @@ class CommentUpdateRequest extends FormRequest
     {
         $ids = Candidate::all()->map(fn($c)=>$c->id);
         return [
-            'content'=>'nullable|regex:/^([ a-žA-Ž0-9\.\,\?\!]*)$/|max:1000',
-            'candidate_id'=>'nullable|'.Rule::in($ids)
+            'content' => 'nullable|text|max:1000',
+            'candidate_id' => 'nullable|' . Rule::in($ids)
         ];
+    }
+    public function messages()
+    {
+        return ValidationUtilities::customMessages();
     }
     protected function failedValidation(Validator $validator)
     {

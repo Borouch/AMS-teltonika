@@ -13,14 +13,14 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-
 class AcademyStatisticsService
 {
-    private const PROPERTY_NAMES = ['positions', 'education_institution', 'gender', 'course', 'status', 'application_date'];
+    private const PROPERTY_NAMES =
+    ['positions', 'educationInstitution', 'gender', 'course', 'status', 'application_date'];
 
     /**
      * @param int|null $academyId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function getStatByPositions($academyId)
@@ -30,9 +30,10 @@ class AcademyStatisticsService
         $stat =  self::getStatByProperty($academyId, $prop, $propResponseName);
         return response()->json($stat, 200);
     }
+
     /**
      * @param int|null $academyId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function getStatByEducationInstitutions($academyId)
@@ -41,9 +42,10 @@ class AcademyStatisticsService
         $stat =  self::getStatByProperty($academyId, $prop);
         return response()->json($stat, 200);
     }
+
     /**
      * @param int|null $academyId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function getStatByGenders($academyId)
@@ -52,9 +54,10 @@ class AcademyStatisticsService
         $stat = self::getStatByProperty($academyId, $prop, isPropertyRelation: false);
         return response()->json($stat, 200);
     }
+
     /**
      * @param int|null $academyId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function getStatByCourses($academyId)
@@ -63,9 +66,10 @@ class AcademyStatisticsService
         $stat =  self::getStatByProperty($academyId, $prop, isPropertyRelation: false);
         return response()->json($stat, 200);
     }
+
     /**
      * @param int|null $academyId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function getStatByStatuses($academyId)
@@ -74,9 +78,10 @@ class AcademyStatisticsService
         $stat = self::getStatByProperty($academyId, $prop, isPropertyRelation: false);
         return response()->json($stat, 200);
     }
+
     /**
      * @param int|null $academyId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function getStatByApplicationDate($academyId)
@@ -93,25 +98,51 @@ class AcademyStatisticsService
 
 
 
-        $filteredCountStat = self::getStatByFilteredCount($academyId,$filterData);
+        $filteredCountStat = self::getStatByFilteredCount($academyId, $filterData);
         $courseProp = self::PROPERTY_NAMES[3];
         $genderProp = self::PROPERTY_NAMES[2];
         $eduProp = self::PROPERTY_NAMES[1];
-        $statByCourse =  self::getStatByProperty($academyId, $courseProp, isPropertyRelation: false, candidateFilterData: $filterData);
-        $statByGender =  self::getStatByProperty($academyId, $genderProp, isPropertyRelation: false, candidateFilterData: $filterData);
-        $statByEdu =  self::getStatByProperty($academyId, $eduProp, isPropertyRelation: true, candidateFilterData: $filterData);
+        $statByCourse =  self::getStatByProperty(
+            $academyId,
+            $courseProp,
+            isPropertyRelation: false,
+            candidateFilterData: $filterData
+        );
+        $statByGender =  self::getStatByProperty(
+            $academyId,
+            $genderProp,
+            isPropertyRelation: false,
+            candidateFilterData: $filterData
+        );
+        $statByEdu =  self::getStatByProperty(
+            $academyId,
+            $eduProp,
+            isPropertyRelation: true,
+            candidateFilterData: $filterData
+        );
 
-         $aggregateStat = self::initAggregateStat($filteredCountStat, 'count');
-         $aggregateStat = self::aggregateStat($aggregateStat,$statByCourse, $courseProp);
-         $aggregateStat = self::aggregateStat($aggregateStat, $statByGender, $genderProp);
-         $aggregateStat = self::aggregateStat($aggregateStat, $statByEdu, $eduProp);
+        $aggregateStat = self::initAggregateStat($filteredCountStat, 'count');
+        $aggregateStat = self::aggregateStat(
+            $aggregateStat,
+            $statByCourse,
+            $courseProp
+        );
+        $aggregateStat = self::aggregateStat(
+            $aggregateStat,
+            $statByGender,
+            $genderProp
+        );
+        $aggregateStat = self::aggregateStat(
+            $aggregateStat,
+            $statByEdu,
+            $eduProp
+        );
         return response()->json($aggregateStat, 200);
-
     }
     /**
      * @param int $academyId
      * @param array $filterData
-     * 
+     *
      * @return array
      */
     public static function getStatByFilteredCount($academyId, $filterData)
@@ -141,7 +172,7 @@ class AcademyStatisticsService
     /**
      * @param array $academiesStat
      * @param string $statPropName
-     * 
+     *
      * @return array
      */
     private static function initAggregateStat($academiesStat, $statPropName)
@@ -157,7 +188,7 @@ class AcademyStatisticsService
      * @param array $aggregatedStat
      * @param array $academiesStat
      * @param string $statPropName
-     * 
+     *
      * @return array
      */
     private static function aggregateStat($aggregatedStat, $academiesStat, $statPropName)
@@ -177,7 +208,7 @@ class AcademyStatisticsService
     /**
      * @param Academy $academy
      * @param string $prop
-     * 
+     *
      * @return \Illuminate\Support\Collection|array
      */
     public static function getPropElementCount($academy, $prop)
@@ -231,7 +262,7 @@ class AcademyStatisticsService
     /**
      * @param \Illuminate\Support\Collection $candidates
      * @param array $filterData
-     * 
+     *
      * @return \Illuminate\Support\Collection
      */
     public static function getFilteredCandidates($candidates, $filterData)
@@ -256,11 +287,16 @@ class AcademyStatisticsService
      * @param string $prop
      * @param null|string $propResponseName
      * @param bool $isPropertyRelation
-     * 
+     *
      * @return array
      */
-    public static function getStatByProperty($academyId, $prop, $propResponseName = null, $isPropertyRelation = true, $candidateFilterData = null)
-    {
+    public static function getStatByProperty(
+        $academyId,
+        $prop,
+        $propResponseName = null,
+        $isPropertyRelation = true,
+        $candidateFilterData = null
+    ) {
         if ($propResponseName == null) {
             $propResponseName = $prop;
         }
@@ -268,7 +304,13 @@ class AcademyStatisticsService
             $academies = Academy::all();
             $academiesStat = [];
             foreach ($academies as $academy) {
-                $academyStat = self::getAcademyStatByProp($academy, $prop, $propResponseName, $isPropertyRelation, $candidateFilterData);
+                $academyStat = self::getAcademyStatByProp(
+                    $academy,
+                    $prop,
+                    $propResponseName,
+                    $isPropertyRelation,
+                    $candidateFilterData
+                );
                 array_push($academiesStat, $academyStat);
             }
             return $academiesStat;
@@ -277,9 +319,15 @@ class AcademyStatisticsService
                 $academy = Academy::findOrFail($academyId);
             } catch (Throwable $e) {
                 //Rethrown in order to be catched by handler
-                throw new NotFoundHttpException(message: $e->getMessage(), code: 404);
+                throw new NotFoundHttpException(message: "No academy with such id exists", code: 404);
             }
-            $academyStat = self::getAcademyStatByProp($academy, $prop, $propResponseName, $isPropertyRelation, $candidateFilterData);
+            $academyStat = self::getAcademyStatByProp(
+                $academy,
+                $prop,
+                $propResponseName,
+                $isPropertyRelation,
+                $candidateFilterData
+            );
             return [$academyStat];
         }
     }
@@ -289,15 +337,14 @@ class AcademyStatisticsService
      * @param \Illuminate\Support\Collection $propElementCount
      * @param \Illuminate\Support\Collection $propElements
      * @param string $prop
-     * 
+     *
      * @return \Illuminate\Support\Collection
      */
-    private static function countPropElements($propElementCount, $propElements, $prop)
+    private static function countPropElements($propElementCount, $propElements, $nameProp)
     {
         foreach ($propElements as $propElement) {
-            
-            if ($propElementCount->has($propElement->$prop)) {
-                $propElementCount[$propElement->$prop] = $propElementCount[$propElement->$prop] + 1;
+            if ($propElementCount->has($propElement->$nameProp)) {
+                $propElementCount[$propElement->$nameProp] = $propElementCount[$propElement->$nameProp] + 1;
             }
         }
         return $propElementCount;
@@ -308,11 +355,16 @@ class AcademyStatisticsService
      * @param string $prop
      * @param string $propResponseName
      * @param bool $isPropertyRelation
-     * 
+     *
      * @return array
      */
-    public static function getAcademyStatByProp($academy, $prop, $propResponseName, $isPropertyRelation, $candidateFilterData)
-    {
+    public static function getAcademyStatByProp(
+        $academy,
+        $prop,
+        $propResponseName,
+        $isPropertyRelation,
+        $candidateFilterData
+    ) {
         $propElementCount = self::getPropElementCount($academy, $prop);
 
         $candidates = $academy->candidates()->get();

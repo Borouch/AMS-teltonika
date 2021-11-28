@@ -22,12 +22,20 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Position whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Position whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $abbreviation
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Academy[] $academies
+ * @property-read int|null $academies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Candidate[] $candidates
+ * @property-read int|null $candidates_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Position whereAbbreviation($value)
  */
 class Position extends Model
 {
+    use HasFactory;
+
     protected $with = [];
     protected $hidden = ['updated_at','pivot'];
-    const ACADEMIES_POSITIONS = [
+    public const ACADEMIES_POSITIONS = [
         'B2B' =>
         [
             'Negotiation skills',
@@ -51,7 +59,6 @@ class Position extends Model
     }
     public function academies()
     {
-        return $this->belongsTomany(Academy::class,'academies_positions');
+        return $this->belongsTomany(Academy::class, 'academies_positions');
     }
-    use HasFactory;
 }

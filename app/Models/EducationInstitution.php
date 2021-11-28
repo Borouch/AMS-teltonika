@@ -16,15 +16,24 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property int $id
  * @method static \Illuminate\Database\Eloquent\Builder|EducationInstitution whereId($value)
+ * @property string|null $abbreviation
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Candidate[] $candidates
+ * @property-read int|null $candidates_count
+ * @method static \Illuminate\Database\Eloquent\Builder|EducationInstitution whereAbbreviation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EducationInstitution whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EducationInstitution whereUpdatedAt($value)
  */
 class EducationInstitution extends Model
 {
-    const EDUCATION_INSTITUTIONS =
+    use HasFactory;
+    protected $hidden = ['updated_at'];
+    public const EDUCATION_INSTITUTIONS =
     [
         'Kaunas University of Technology',
         'Vilnius Gediminas technical university'
     ];
-    use HasFactory;
 
     public function candidates()
     {

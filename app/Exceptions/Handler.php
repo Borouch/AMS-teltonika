@@ -4,11 +4,9 @@ namespace App\Exceptions;
 
 use Exception;
 use Throwable;
-
 use ErrorException;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
-
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

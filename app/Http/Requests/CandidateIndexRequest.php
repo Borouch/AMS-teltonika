@@ -3,11 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Models\Academy;
+use App\Models\Position;
+use App\Models\Candidate;
 use Illuminate\Validation\Rule;
 use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
 
 class CandidateIndexRequest extends FormRequest
 {
@@ -28,12 +29,28 @@ class CandidateIndexRequest extends FormRequest
      */
     public function rules()
     {
-
+        $acs = Academy::all()->map(fn($ac)=>$ac->id);
+        $pos = Position::all()->map(fn($p)=>$p->id);
         return [
-            'should_group_by_academy' => 'nullable|'.Rule::in(['0','1']),
+            'name' => 'nullable|letter_space',
+            'group_by_academy' => 'nullable|' . Rule::in([0,1]),
+            'surnname'=>'nullable|letter_space',
+            'email' => 'nullable',
+            'phone'=> 'nullable|numeric|integer',
+            'date_from'=>'nullable|date',
+            'date_to'=>'nullable|date',
+            'academy' => 'nullable|'.Rule::in($acs),
+            'positions.*'=>'nullable|'.Rule::in($pos),
+            'course'=>'nullable|'.Rule::in(Candidate::COURSES)
         ];
     }
-
+    public function messages()
+    {
+        $msg = ValidationUtilities::customMessages();
+        $msg['positions.*.in']="No position with such id exists";
+        $msg['group_by_academy']="Field must be either 0 or 1";
+        return $msg;
+    }
     /**
      * Get all of the input and files for the request.
      *
@@ -43,7 +60,7 @@ class CandidateIndexRequest extends FormRequest
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['should_group_by_academy'] = $this->route('should_group_by_academy');
+        $data['group_by_academy'] = $this->route('group_by_academy');
 
         return $data;
     }

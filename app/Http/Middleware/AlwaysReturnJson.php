@@ -16,9 +16,8 @@ class AlwaysReturnJson
      */
     public function handle(Request $request, Closure $next)
     {
-        $request->headers->set('accept', 'application/json', true);
+        $request->headers->set('accept', 'application/json;charset=UTF-8', true);
         $response = $next($request);
-
         return $response;
     }
 }

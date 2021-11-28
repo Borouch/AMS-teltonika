@@ -28,6 +28,7 @@ class CreateCandidatesTable extends Migration
             $table->string('can_manage_data')->default('1');
             $table->foreignId('academy_id')->references('id')->on('academies');
             $table->string('CV')->nullable();
+        
             $table->timestamps();
         });
     }

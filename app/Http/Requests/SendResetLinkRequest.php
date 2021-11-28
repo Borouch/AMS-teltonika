@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 
-class CandidateImportRequest extends FormRequest
+class SendResetLinkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +23,8 @@ class CandidateImportRequest extends FormRequest
      */
     public function rules()
     {
-
         return [
-            'candidates_data' => 'required|mimes:csv,txt'
+            'email' => 'required|email',
         ];
-    }
-    protected function failedValidation(Validator $validator)
-    {
-        ValidationUtilities::failedValidation($validator);
     }
 }

@@ -29,15 +29,22 @@ class StorePositionRequest extends FormRequest
     public function rules()
     {
         $posNames = Position::all()->map(fn($pos)=>$pos->name);
-        $acNames = Academy::all()->map(fn($ac)=>$ac->name);
+        $posAbvs= Position::all()->map(fn($pos)=>$pos->abbreviation);
+        $acIds = Academy::all()->map(fn($ac)=>$ac->id);
         return [
-            'name' => 'required|regex:/^([a-žA-Ž ]*)$/|'.Rule::notIn($posNames),
-            'abbreviation' => 'nullable|alpha_num',
-            'academies.*' => 'required|'.Rule::in($acNames),
-            
+            'name' => 'required|Letter_space|' . Rule::notIn($posNames),
+            'abbreviation' => 'nullable|Letter_num_space|'.Rule::notIn($posAbvs),
+            'academies.*' => 'required|' . Rule::in($acIds),
 
         ];
     }
+
+  
+    public function messages()
+    {
+        return ValidationUtilities::customMessages();
+    }
+
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);

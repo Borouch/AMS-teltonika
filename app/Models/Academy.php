@@ -29,17 +29,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Academy extends Model
 {
-    protected $hidden = ['created_at','updated_at','pivot'];
+    use HasFactory;
 
-    const ACADEMIES = [
+    protected $hidden = ['updated_at','pivot'];
+
+    public const ACADEMIES = [
         ['name' => 'Business to business', 'abbreviation' => 'B2B'],
         ['name' => 'Internet of things', 'abbreviation' => 'IoT']
     ];
-    use HasFactory;
 
     public function positions()
     {
-        return $this->belongsToMany(Position::class,'academies_positions');
+        return $this->belongsToMany(Position::class, 'academies_positions');
     }
     public function candidates()
     {

@@ -28,7 +28,7 @@ class CandidateFactory extends Factory
         $institutions = EducationInstitution::all();
         $academies = Academy::all();
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->firstName(),
             'surnname' => $this->faker->lastName(),
             'gender' => $this->faker->randomElement($genders),
             'phone' => $this->faker->numerify('86#######'),

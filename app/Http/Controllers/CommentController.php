@@ -3,31 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Services\CommentService;
 use App\Http\Requests\CommentStoreRequest;
 use App\Http\Requests\CommentUpdateRequest;
 
 class CommentController extends Controller
 {
-    public function store(CommentStoreRequest $request,$candidateId)
-    {
-        return CommentService::storeComment($request,$candidateId);
+    
+    public function index(Request $request, $id=null){
+        return CommentService::indexComment($id);
     }
+
     /**
-     * @param CommentUpdateRequest $request
-     * @param int $commentId
+     * @param CommentStoreRequest $request
+     * @param id $candidateId
      * 
-     * @return [type]
+     * @return \Illuminate\Http\JsonResponse
      */
+    public function store(CommentStoreRequest $request, $candidateId)
+    {
+        return CommentService::storeComment($request, $candidateId);
+    }
+
     /**
      * @param CommentUpdateRequest $request
      * @param mixed $commentId
-     * 
-     * @return [type]
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CommentUpdateRequest $request,$commentId)
+    public function update(CommentUpdateRequest $request, $commentId)
     {
-        return CommentService::updateComment($request,$commentId);
+        return CommentService::updateComment($request, $commentId);
     }
 }

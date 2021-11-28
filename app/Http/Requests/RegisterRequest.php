@@ -2,13 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Academy;
+use App\Models\User;
 use Illuminate\Validation\Rule;
-use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 
-class AcademyGetRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,13 +25,14 @@ class AcademyGetRequest extends FormRequest
      */
     public function rules()
     {
-        $acNames = Academy::all()->map(fn($ac)=>$ac->name);
+        $userEmails = User::all()->map(fn ($u) => $u->email);
         return [
-            'academy_name' => 'required|' . Rule::in($acNames)
+            'email' => 'required|email|' . Rule::notIn($userEmails),
         ];
     }
-    protected function failedValidation(Validator $validator)
+
+    public function messages()
     {
-        ValidationUtilities::failedValidation($validator);
+        return [ 'email.not_in'=>"A user already exists with this email address" ];
     }
 }

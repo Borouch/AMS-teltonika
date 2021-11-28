@@ -31,12 +31,18 @@ class DatabaseSeeder extends Seeder
 
 
         $institutions = EducationInstitution::EDUCATION_INSTITUTIONS;
-        $institutions = array_map(
-            fn ($institution): array =>
-            ['name' => $institution],
-            $institutions
-        );
-        EducationInstitution::insert($institutions);
+        foreach($institutions as $i)
+        {
+            $edu = new EducationInstitution();
+            $edu->name=$i;
+            $edu->save();
+        }
+        // $institutions = array_map(
+        //     fn ($institution): array =>
+        //     ['name' => $institution],
+        //     $institutions
+        // );
+        // EducationInstitution::insert($institutions);
         Candidate::factory(10)->create();
         CandidatesPositions::factory(20)->create();
     }

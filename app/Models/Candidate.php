@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $phone
  * @property string $email
  * @property string $application_date
- * @property string $education_institution
+ * @property string $educationInstitution
  * @property string $city
  * @property string $status
  * @property string $course
@@ -55,12 +55,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property-read int|null $positions_count
  * @method static \Illuminate\Database\Eloquent\Builder|Candidate whereAcademyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Candidate whereEducationInstitutionId($value)
+ * @property string $can_manage_data
+ * @method static \Illuminate\Database\Eloquent\Builder|Candidate whereCanManageData($value)
  */
 class Candidate extends Model
 {
-    protected $with = ['positions','comments','education_institution','academy'];
+    use HasFactory;
+
+    protected $with = ['positions','comments','educationInstitution','academy'];
     protected $hidden = ['created_at','updated_at','education_institution_id','academy_id'];
-    const COURSES = [
+    public const COURSES = [
         'first stage 1',
         'first stage 2',
         'first stage 3',
@@ -72,12 +76,12 @@ class Candidate extends Model
         'not studying'
     ];
 
-    const GENDERS =
+    public const GENDERS =
     [
         'male',
         'female',
     ];
-    const STATUSES =
+    public const STATUSES =
     [
         'candidate',
         'called for interview',
@@ -92,13 +96,13 @@ class Candidate extends Model
 
     public function positions()
     {
-        return $this->belongsToMany(Position::class,'candidates_positions');
+        return $this->belongsToMany(Position::class, 'candidates_positions');
     }
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
-    public function education_institution()
+    public function educationInstitution()
     {
         return $this->belongsTo(EducationInstitution::class);
     }
@@ -106,6 +110,4 @@ class Candidate extends Model
     {
         return $this->belongsTo(Academy::class);
     }
-
-    use HasFactory;
 }

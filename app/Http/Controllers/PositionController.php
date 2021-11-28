@@ -9,10 +9,21 @@ use App\Http\Requests\StorePositionRequest;
 
 class PositionController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request,$id = null)
     {
-        return response()->json([Position::all(),200]);
+        return PositionService::indexPositions($id);
     }
+    
+    /**
+     * @param StorePositionRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StorePositionRequest $request)
     {
         return PositionService::storePosition($request);

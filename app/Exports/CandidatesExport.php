@@ -10,13 +10,16 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class CandidatesExport implements WithHeadings, FromArray
 {
+    /**
+     * @return array
+     */
     public function array(): array
     {
         $candidates = Candidate::all()->toArray();
         $candidates = array_map(function ($candidate) {
             $positionsExport = Position::all()->mapWithKeys(fn ($pos) => [$pos->name => '0'])->toArray();
             $candPos = $candidate['positions'];
-            foreach ($candPos  as $pos) {
+            foreach ($candPos as $pos) {
                 $positionsExport[$pos['name']] = '1';
             }
             $positionsExportValues = [];
@@ -24,6 +27,7 @@ class CandidatesExport implements WithHeadings, FromArray
                 array_push($positionsExportValues, $value);
             }
             $comments = $candidate['comments'];
+
             $comments = array_map(fn ($c) => $c['content'], $comments);
             $aggComment = $this->aggregateComments($comments);
             return [
@@ -48,6 +52,11 @@ class CandidatesExport implements WithHeadings, FromArray
         return $candidates;
     }
 
+    /**
+     * @param array $comments
+     *
+     * @return string
+     */
     public function aggregateComments($comments): string
     {
         $aggregatedContent = "";
@@ -60,6 +69,9 @@ class CandidatesExport implements WithHeadings, FromArray
         }
         return $aggregatedContent;
     }
+    /**
+     * @return array
+     */
     public function headings(): array
     {
         $pNames = Position::all()->map(fn ($p) => $p->name)->toArray();
@@ -78,7 +90,7 @@ class CandidatesExport implements WithHeadings, FromArray
             'academy',
             'CV',
             'can_manage_data',
-            'comment',
+            'comments',
             ...$pNames,
         ];
     }

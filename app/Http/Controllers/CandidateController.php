@@ -18,17 +18,18 @@ class CandidateController extends Controller
     /**
      * @param CandidateIndexRequest $request
      * @param null|string $shouldGroupByAcademy=null
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(CandidateIndexRequest $request, $shouldGroupByAcademy = null)
+    public function index(CandidateIndexRequest $request,$id=null)
     {
 
-        return Candidateservice::indexCandidates($shouldGroupByAcademy);
+        return Candidateservice::indexCandidates($id,$request);
     }
+
     /**
      * @param CandidateStoreRequest $request
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(CandidateStoreRequest $request)
@@ -36,37 +37,22 @@ class CandidateController extends Controller
 
         return response()->json(CandidateService::storeCandidate($request), 200);
     }
+
     /**
      * @param CandidateUpdateRequest $request
      * @param int $candidateId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(CandidateUpdateRequest $request, $candidateId)
     {
         return CandidateService::updateCandidate($request, $candidateId);
     }
-    /**
-     * @param CandidateSearchRequest $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function search(CandidateSearchRequest $request)
-    {
-        return CandidateService::searchCandidates($request);
-    }
-    /**
-     * @param CandidateFilterRequest $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function filter(CandidateFilterRequest $request)
-    {
-        return CandidateService::filterCandidates($request);
-    }
+
+
     /**
      * @param CandidateImportRequest $request
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function import(CandidateImportRequest $request)
@@ -76,7 +62,7 @@ class CandidateController extends Controller
 
     /**
      * @param Request $request
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function export(Request $request)
@@ -88,7 +74,7 @@ class CandidateController extends Controller
     /**
      * @param Request $request
      * @param int $candidateId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function exportCV(Request $request, $candidateId)

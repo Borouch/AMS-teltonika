@@ -26,7 +26,8 @@ class EducationInstitutionStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>'required|regex:/^([a-žA-Ž ]*)$/',
+            'name' => 'required|LTalpha_spaces_dash',
+            'abbreviation'=>'required|LTalpha_spaces_dash'
         ];
     }
     protected function failedValidation(Validator $validator)

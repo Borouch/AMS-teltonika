@@ -11,10 +11,10 @@ class EducationInstitutionController extends Controller
 {
     public function store(EducationInstitutionStoreRequest $request)
     {
-        return EducationInstitutionService::storeEducationInstitution($request);
+        return EducationInstitutionService::storeEdu($request);
     }
-    public function index(Request $request)
+    public function index(Request $request,$id = null)
     {
-        return Response()->json(['education_institutions'=>EducationInstitution::all()]);
+        return EducationInstitutionService::indexEdu($id);
     }
 }

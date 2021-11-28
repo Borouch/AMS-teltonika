@@ -5,52 +5,60 @@ namespace App\Services;
 use Exception;
 use Throwable;
 use App\Models\Academy;
-use App\Models\Comment;
-use App\Models\Position;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Exports\CandidatesExport;
 use App\Imports\CandidatesImport;
-use Illuminate\Support\Facades\DB;
 use App\Models\CandidatesPositions;
 use App\Models\EducationInstitution;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CandidateService
 {
     /**
-     * @param null|string $shouldGroupByAcademy
-     * 
+     * @param null|string $groupByAcademy
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function indexCandidates($shouldGroupByAcademy)
+    public static function indexCandidates($id, $request)
     {
-
-        $candidates = Candidate::all();
-
-        if ($shouldGroupByAcademy == 1) {
-            $groupedCandidates = [];
-            $academies = Academy::all();
-            foreach ($academies as $ac) {
-                $group = ['academy' => $ac->name, 'candidates' => []];
-                array_push($groupedCandidates, $group);
+        $groupByAcademy = $request->get('group_by_academy');
+        if ($id != null) {
+            try {
+                $candidate = Candidate::findOrFail($id);
+            } catch (Throwable $e) {
+                //Rethrown in order to be catched by handler
+                throw new NotFoundHttpException(message: "User with such id does not exist", code: 404);
             }
-            foreach ($candidates as $candidate) {
-                $groupedCandidates = self::addCandidateToGroup($groupedCandidates, $candidate);
+            return response()->json(['candidate' => $candidate]);
+            $academy = $candidate->academy()->get();
+            return response()->json(['academy' => $academy, 'candidate' => $candidate]);
+        } else {
+
+            $candidates = self::searchCandidates($request);
+            $candidates = self::filterCandidates($candidates,$request);
+            if ($groupByAcademy == 1) {
+                $groupedCandidates = [];
+                $academies = Academy::all();
+                foreach ($academies as $ac) {
+                    $group = ['academy' => $ac->name, 'candidates' => []];
+                    array_push($groupedCandidates, $group);
+                }
+                foreach ($candidates as $candidate) {
+                    $groupedCandidates = self::addCandidateToGroup($groupedCandidates, $candidate);
+                }
+                return response()->json(['grouped candidates' => $groupedCandidates], 200);
             }
-            return response()->json(['grouped candidates' => $groupedCandidates], 200);
+
+            return response()->json(['candidates' => $candidates], 200);
         }
-
-        return response()->json(['candidates' => $candidates], 200);
     }
 
     /**
      * @param array $groupedCandidates
      * @param Collection $candidate
-     * 
+     *
      * @return array
      */
     public static function addCandidateToGroup($groupedCandidates, $candidate)
@@ -65,29 +73,36 @@ class CandidateService
         return $groupedCandidates;
     }
     /**
+     * This method allows for @see self::storeCandidate() method to store data from multiple sources
+     * Namely from HTTP request and excel import data array @see self::importCandidates()
      * @param Request|array $dataSource
      * @param string $inputField
-     * 
-     * @return string
+     *
+     * @return string|array
      */
     public static function getStoreFieldInput($dataSource, string $inputField)
     {
-        if ($dataSource instanceof Request) {
+        if ($dataSource instanceof Request) { //Data from request
             if ($inputField == 'CV') {
                 if ($dataSource->hasfile('CV') != null) {
                     return $dataSource->file('CV')->store('CVs');
-                } else return null;
+                } else {
+                    return null;
+                }
+            }
+            if ($inputField == 'comments' && $dataSource->filled('comments')) {
+                return [$dataSource->input($inputField)];
             } else {
                 return $dataSource->input($inputField);
             }
-        } else {
+        } else { //Data from candidates import
             return $dataSource[$inputField];
         }
     }
     /**
      * @param Request|null $request
      * @param array|null $candidateData
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function storeCandidate(Request $request = null, array $candidateData = null)
@@ -106,24 +121,20 @@ class CandidateService
         }
         $candidate->gender =  self::getStoreFieldInput($dataSource, 'gender');
         $candidate->application_date =  self::getStoreFieldInput($dataSource, 'application_date');
-        $education_institution =  self::getStoreFieldInput($dataSource, 'education_institution');
-        $eduId = EducationInstitution::where('name', '=', $education_institution)->first()->id;
+        $eduId = self::getStoreFieldInput($dataSource, 'education_institution_id');
         $candidate->education_institution_id = $eduId;
         $candidate->city = self::getStoreFieldInput($dataSource, 'city');
         $candidate->course =  self::getStoreFieldInput($dataSource, 'course');
-        $academyName =  self::getStoreFieldInput($dataSource, 'academy');
-        $acId = Academy::where('name', '=', $academyName)->first()->id;
+        $acId = self::getStoreFieldInput($dataSource, 'academy_id');
         $candidate->academy_id = $acId;
         $phone = self::getStoreFieldInput($dataSource, 'phone');
         $status = self::getStoreFieldInput($dataSource, 'status');
-        $comment = self::getStoreFieldInput($dataSource, 'comment');
+        $comments = self::getStoreFieldInput($dataSource, 'comments');
         $CV = self::getStoreFieldInput($dataSource, 'CV');
         if ($phone != null) {
-
             $candidate->phone = $phone;
         }
         if ($status != null) {
-
             $candidate->status = $status;
         }
         if ($CV != null) {
@@ -131,8 +142,12 @@ class CandidateService
         }
         $candidate->save();
         $candidateId = Candidate::all()->last()->id;
-        if ($comment != null) {
-            CommentService::saveComment($comment, $candidateId);
+        if ($comments != null) {
+            foreach ($comments as $comment) {
+                if ($comment != '') {
+                    CommentService::saveComment($comment, $candidateId);
+                }
+            }
         }
         $positions = self::getStoreFieldInput($dataSource, 'positions');
         self::storeCandidatePosition($positions, $candidateId);
@@ -142,7 +157,7 @@ class CandidateService
     /**
      * @param Request $request
      * @param int $candidateId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function updateCandidate(Request $request, $candidateId)
@@ -171,15 +186,19 @@ class CandidateService
             $hasValue = true;
             $candidate->update(['phone' => $request->input('phone')]);
         }
-        if ($request->filled('education_institution')) {
+        if ($request->filled('status')) {
             $hasValue = true;
-            $edu = $request->input('education_institution');
+            $candidate->update(['status' => $request->input('status')]);
+        }
+        if ($request->filled('education_institution_id')) {
+            $hasValue = true;
+            $edu = $request->input('education_institution_id');
             $edu_id = EducationInstitution::where('name', '=', $edu)->first()->id;
             $candidate->update(['education_institution_id' => $edu_id]);
         }
-        if ($request->filled('academy')) {
+        if ($request->filled('academy_id')) {
             $hasValue = true;
-            $newAcName = $request->input('academy');
+            $newAcName = $request->input('academy_id');
 
             $currentAc = $candidate->academy->get()->first();
             //When changing academies current positions that candidate applies are deleted
@@ -239,92 +258,87 @@ class CandidateService
             $$relationElement->pivot->delete();
         }
     }
+    
     /**
      * @param Request $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function searchCandidates(Request $request)
     {
-        $hasValue = false;
-        if ($request->filled('name')) {
-            $hasValue = true;
-            $name = $request->input('name');
-            $candidates = DB::table('candidates')->where('name', 'like', "%$name%")->get();
-        }
-        if ($request->filled('surnname')) {
-            $hasValue = true;
-            $surnname = $request->input('surnname');
-            $candidates = DB::table('candidates')->where('surnname', 'like', "%$surnname%")->get();
-        }
-        if ($request->filled('phone')) {
-            $hasValue = true;
-            $phone = $request->input('phone');
-            $candidates = DB::table('candidates')->where('phone', 'like', "%$phone%")->get();
-        }
-        if ($request->filled('email')) {
-            $hasValue = true;
-            $email = $request->input('email');
-            $candidates = DB::table('candidates')->where('email', 'like', "%$email%")->get();
-        }
-        if (!$hasValue) {
-            throw new Exception('All valid search fields are empty', 406);
-        }
-        $count = $candidates->count();
-        return response()->json(['message' => " $count candidates found that match search query fields ", 'candidates' => $candidates], 200);
+
+        $name = $request->input('name');
+        $surnname = $request->input('surnname');
+        $phone = $request->input('phone');
+        $email = $request->input('email');
+        $candidates = Candidate::when($name != null, function ($query) use ($name) {
+
+            return $query->where('name', 'like', "%$name%");
+        })
+            ->when($surnname != null, function ($query) use ($surnname) {
+
+                return $query->where('surnname', 'like', "%$surnname%");
+            })
+
+            ->when($email != null, function ($query) use ($email) {
+
+                return $query->where('email', 'like', "%$email%");
+            })
+
+            ->when($phone != null, function ($query) use ($phone) {
+
+                return $query->where('phone', 'like', "%$phone%");
+            })
+            ->get();
+
+        return $candidates;
     }
+
 
     /**
      * @param Request $request
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function filterCandidates(Request $request)
+    public static function filterCandidates($candidates,Request $request)
     {
-        $hasValue = false;
-        $candidates = Candidate::all();
         if ($request->filled('date_from')) {
-            $hasValue = true;
             $dateFrom = $request->input('date_from');
             $candidates = $candidates->where('application_date', '>=', "$dateFrom");
         }
+
         if ($request->filled('date_to')) {
-            $hasValue = true;
             $dateTo = $request->input('date_to');
             $candidates = $candidates->where('application_date', '<', "$dateTo");
         }
+
         if ($request->filled('positions')) {
-            $hasValue = true;
             $inputPositions = $request->input('positions');
             $candidates = $candidates->filter(function ($candidate) use ($inputPositions) {
                 $candidatePositions = $candidate->positions()
                     ->get()
-                    ->map(fn ($pos) => $pos->name);
-                $count = $candidatePositions->intersect($inputPositions)->count();
-                return $count != 0;
+                    ->map(fn ($pos) => $pos->id)->toArray();
+                $count = count(array_intersect($candidatePositions,$inputPositions));
+                return $count == count($inputPositions);
             });
         }
-        if ($request->filled('academy')) {
-            $hasValue = true;
-            $academyName = $request->input('academy');
-            $academyId = Academy::where('name', '=', $academyName)->first()->id;
-            $candidates = $candidates->where('academy_id', '=', $academyId);
-        }
-        if ($request->filled('course')) {
-            $hasValue = true;
-            $course = $request->input('course');
 
+        if ($request->filled('academy')) {
+            $academy= $request->input('academy');
+            $candidates = $candidates->where('academy', '=', $academy);
+        }
+
+        if ($request->filled('course')) {
+            $course = $request->input('course');
             $candidates = $candidates->where('course', '=', "$course");
         }
-        if (!$hasValue) {
-            throw new Exception('All valid filter fields are empty', 406);
-        }
-        $count = $candidates->count();
-        return response()->json(['message' => " $count candidates found that match search query fields ", 'candidates' => $candidates], 200);
+
+        return $candidates;
     }
+
     /**
      * @param Request $request
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function importCandidates(Request $request)
@@ -333,7 +347,7 @@ class CandidateService
 
 
         $candidates = Excel::toCollection(new CandidatesImport(), $path, null, \Maatwebsite\Excel\Excel::CSV);
-        $candidates = CandidatesImport::validateCandidates($candidates[0]);
+        $candidates = CandidatesImport::processCandidates($candidates[0]);
         $responses = [];
         foreach ($candidates as $candidate) {
             $response = self::storeCandidate(candidateData: $candidate);
@@ -344,9 +358,10 @@ class CandidateService
 
         return response()->json(['candidates' => $candidates], 200);
     }
+
     /**
      * @param mixed $candidateId
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public static function exportCV($candidateId)
@@ -360,22 +375,29 @@ class CandidateService
         }
         return response()->download(storage_path('app/' . $candidate->CV));
     }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public static function exportCandidates()
     {
-        $fileName = now()->format("Y-m-d H:i:s") . '.xlsx';
-        $response = Excel::download(new CandidatesExport, $fileName);
-
-        $response->prepare(Request::createFromGlobals());
+        $fileName = now()->setTimezone('Europe/Vilnius')->format("Y-m-d H:i:s") . '.xlsx';
+        $response = Excel::download(new CandidatesExport(), $fileName);
         return $response;
     }
+
+    /**
+     * @param array $positions
+     * @param int $candidateId
+     *
+     * @return void
+     */
     public static function storeCandidatePosition($positions, $candidateId)
     {
         foreach ($positions as $position) {
-
-            $positionId = Position::all()->where('name', '=', $position)->first()->id;
             $candidatePosition = new CandidatesPositions();
             $candidatePosition->candidate_id = $candidateId;
-            $candidatePosition->position_id = $positionId;
+            $candidatePosition->position_id = $position;
             $candidatePosition->save();
         }
     }

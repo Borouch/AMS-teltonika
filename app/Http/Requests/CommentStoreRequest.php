@@ -26,12 +26,11 @@ class CommentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'content' => 'required|regex:/^([ a-žA-Ž0-9\.\,\?\!]*)$/|max:1000',
+            'content' => 'required|text|max:1000',
         ];
     }
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);
     }
-    
 }

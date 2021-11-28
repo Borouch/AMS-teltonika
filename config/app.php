@@ -177,7 +177,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Maatwebsite\Excel\ExcelServiceProvider::class,
-
+        App\Providers\ValidatorServiceProvider::class,
     ],
 
     /*
@@ -234,5 +234,7 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
-
+    /* Used in MailService to setup email sender */
+    'mail_from_username'=>env('MAIL_FROM_USERNAME'),
+    'mail_from_name'=>env('MAIL_FROM_NAME')
 ];

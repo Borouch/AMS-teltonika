@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Utilities\ValidationUtilities;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 
-class CandidateImportRequest extends FormRequest
+class PasswordResetRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +24,10 @@ class CandidateImportRequest extends FormRequest
      */
     public function rules()
     {
-
         return [
-            'candidates_data' => 'required|mimes:csv,txt'
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed',Password::defaults()],
         ];
-    }
-    protected function failedValidation(Validator $validator)
-    {
-        ValidationUtilities::failedValidation($validator);
     }
 }
