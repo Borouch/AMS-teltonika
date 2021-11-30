@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use App\Notifications\PasswordResetNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,9 +28,9 @@ class User extends Authenticatable
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
-
-
-
+    use HasRoles;
+    protected $with='roles';
+    protected $guard_name = 'web';
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -40,6 +41,15 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+       /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
     public function sendPasswordResetNotification($token)
     {
 
@@ -47,4 +57,5 @@ class User extends Authenticatable
 
         $this->notify(new PasswordResetNotification($url));
     }
+
 }

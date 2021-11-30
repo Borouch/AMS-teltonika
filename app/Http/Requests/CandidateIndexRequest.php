@@ -33,8 +33,8 @@ class CandidateIndexRequest extends FormRequest
         $pos = Position::all()->map(fn($p)=>$p->id);
         return [
             'name' => 'nullable|letter_space',
-            'group_by_academy' => 'nullable|' . Rule::in([0,1]),
             'surnname'=>'nullable|letter_space',
+            'group_by_academy' => 'nullable|' . Rule::in([0,1]),
             'email' => 'nullable',
             'phone'=> 'nullable|numeric|integer',
             'date_from'=>'nullable|date',

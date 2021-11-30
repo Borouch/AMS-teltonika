@@ -29,7 +29,7 @@ class CandidateService
                 $candidate = Candidate::findOrFail($id);
             } catch (Throwable $e) {
                 //Rethrown in order to be catched by handler
-                throw new NotFoundHttpException(message: "User with such id does not exist", code: 404);
+                throw new NotFoundHttpException(message: "Candidate with such id does not exist", code: 404);
             }
             return response()->json(['candidate' => $candidate]);
             $academy = $candidate->academy()->get();
@@ -37,7 +37,7 @@ class CandidateService
         } else {
 
             $candidates = self::searchCandidates($request);
-            $candidates = self::filterCandidates($candidates,$request);
+            $candidates = self::filterCandidates($candidates, $request);
             if ($groupByAcademy == 1) {
                 $groupedCandidates = [];
                 $academies = Academy::all();
@@ -162,12 +162,8 @@ class CandidateService
      */
     public static function updateCandidate(Request $request, $candidateId)
     {
-        try {
-            $candidate = Candidate::findOrFail($candidateId);
-        } catch (Throwable $e) {
-            //Rethrown in order to be catched by handler
-            throw new NotFoundHttpException(message: $e->getMessage(), code: 404);
-        }
+        $candidate = Candidate::find($candidateId);
+
 
         $hasValue = false;
         if ($request->filled('name')) {
@@ -258,7 +254,7 @@ class CandidateService
             $$relationElement->pivot->delete();
         }
     }
-    
+
     /**
      * @param Request $request
      *
@@ -300,7 +296,7 @@ class CandidateService
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function filterCandidates($candidates,Request $request)
+    public static function filterCandidates($candidates, Request $request)
     {
         if ($request->filled('date_from')) {
             $dateFrom = $request->input('date_from');
@@ -318,13 +314,13 @@ class CandidateService
                 $candidatePositions = $candidate->positions()
                     ->get()
                     ->map(fn ($pos) => $pos->id)->toArray();
-                $count = count(array_intersect($candidatePositions,$inputPositions));
+                $count = count(array_intersect($candidatePositions, $inputPositions));
                 return $count == count($inputPositions);
             });
         }
 
         if ($request->filled('academy')) {
-            $academy= $request->input('academy');
+            $academy = $request->input('academy');
             $candidates = $candidates->where('academy', '=', $academy);
         }
 

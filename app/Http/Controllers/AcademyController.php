@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\AcademyService;
 use App\Http\Requests\AcademyStoreRequest;
+use App\Http\Requests\statByMonthRequest;
 use App\Services\AcademyStatisticsService;
 
 class AcademyController extends Controller
@@ -109,14 +110,15 @@ class AcademyController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param statByMonthRequest $request
      * @param mixed $month
      * @param null|int $academyId
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function statByMonth(Request $request, $month, $academyId = null)
+    public function statByMonth(statByMonthRequest $request, $academyId = null,$monthNumber)
     {
-        return AcademyStatisticsService::getStatByMonth($month, $academyId);
+
+        return AcademyStatisticsService::getStatByMonth($monthNumber, $academyId);
     }
 }

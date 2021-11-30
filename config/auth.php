@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash'=>false
+        ],
     ],
 
     /*
@@ -65,10 +70,6 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
@@ -93,6 +94,7 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        
     ],
 
     /*

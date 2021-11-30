@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Utilities\ValidationUtilities;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class PasswordResetRequest extends FormRequest
 {
@@ -27,7 +29,11 @@ class PasswordResetRequest extends FormRequest
         return [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => ['required', 'confirmed',Password::defaults()],
+            'password' => ['required', 'confirmed', Password::defaults()],
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
     }
 }

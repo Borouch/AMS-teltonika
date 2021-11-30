@@ -18,12 +18,7 @@ class AcademyService
     public static function indexAcademy( $id)
     {
         if ($id != null) {
-            try {
-                $academy= Academy::findOrFail($id);
-            } catch (Throwable $e) {
-                //Rethrown in order to be catched by handler
-                throw new NotFoundHttpException(message: $e->getMessage(), code: 404);
-            }
+            $academy = self::findAcademyOrFail($id);
             return response()->json(['academy' => $academy], 200);
         }else 
         {
@@ -56,13 +51,24 @@ class AcademyService
      */
     public static function getAcademyWithPositions($id)
     {
-        try {
-            $academy = Academy::with('positions')->findOrFail($id);
-        } catch (Throwable $e) {
-            //Rethrown in order to be catched by handler
-            throw new NotFoundHttpException(message: $e->getMessage(), code: 404);
-        }
+        $academy = self::findAcademyOrFail($id);
         $academy->positions = $academy->positions->makeHidden('academies')->toArray();
         return response()->json(['academy' => $academy], 200);
+    }
+
+    /**
+     * @param int $id
+     * 
+     * @return Academy
+     */
+    public static function findAcademyOrFail($id)
+    {
+        try {
+            $academy= Academy::findOrFail($id);
+        } catch (Throwable $e) {
+            //Rethrown in order to be catched by handler
+            throw new NotFoundHttpException(message: "Academy with such id does not exist", code: 404);
+        }
+        return $academy;
     }
 }

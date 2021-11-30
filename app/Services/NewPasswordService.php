@@ -17,6 +17,7 @@ class NewPasswordService
      */
     public static function resetPassword(Request $request)
     {
+        
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {

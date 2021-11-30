@@ -9,6 +9,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EducationInstitutionService
 {
+
+    public static function storeInitialEdu()
+    {
+        $institutions = EducationInstitution::EDUCATION_INSTITUTIONS;
+        foreach($institutions as $i)
+        {
+            $edu = new EducationInstitution();
+            $edu->name=$i;
+            $edu->save();
+        }
+    }
+
     /**
      * @param int|null $id
      * 

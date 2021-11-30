@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
+use App\Services\RoleService;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 
-class RegisterRequest extends FormRequest
+class RoleUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,15 +28,30 @@ class RegisterRequest extends FormRequest
      */
     public function rules()
     {
-        $userEmails = User::all()->map(fn ($u) => $u->email);
+        $rolesIds = Role::all()->map(fn ($r) => $r->id);
         return [
-            'email' => 'required|email|' . Rule::notIn($userEmails),
+            'role_id' => 'required|' . Rule::in($rolesIds),
+            'name' => 'nullable|Letter_space',
+            'guard_name' => 'nullable|Letter_space',
         ];
+
+    }
+
+    /**
+     * @param null $keys
+     * 
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = parent::all();
+        $data['role_id'] = $this->route('role_id');
+        return $data;
     }
 
     public function messages()
     {
-        return [ 'email.not_in'=>"A user already exists with this email address" ];
+        return RoleService::validationMessages();
     }
     protected function failedValidation(Validator $validator)
     {

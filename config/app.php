@@ -234,7 +234,8 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
-    /* Used in MailService to setup email sender */
-    'mail_from_username'=>env('MAIL_FROM_USERNAME'),
-    'mail_from_name'=>env('MAIL_FROM_NAME')
+    
+    /**   Will be used to create initial user with admin role    */
+    'admin_email_address'=> env('ADMIN_EMAIL_ADDRESS','admin@teltonika.com'),
+    'admin_password'=> env('ADMIN_PASSWORD','demo'),
 ];

@@ -37,9 +37,10 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
              CandidatesImport::validationFields($row);
             $unixtime = strtotime($row['application_date']);
             $row['application_date'] = date('Y-m-d', $unixtime);
-            $candPosNames = self::getCandidatePositionsNames($row);
+            $candPosNames = self::getCandidatePOsitionsIds($row);
             $comments = explode('; ', $row['comments']);
-
+            $eduId = EducationInstitution::where('name','=',$row['education_institution'])->first()->id;
+            $acId = Academy::where('name','=',$row['academy'])->first()->id;
             return [
                 'name' => $row['name'],
                 'surnname' => $row['surnname'],
@@ -47,14 +48,14 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
                 'phone' => $row['phone'],
                 'email' => $row['email'],
                 'application_date' => $row['application_date'],
-                'education_institution' => $row['education_institution'],
+                'education_institution_id' => $eduId ,
                 'course' => $row['course'],
                 'city' => $row['city'],
                 'status' => $row['status'],
                 'positions' => $candPosNames,
                 'can_manage_data' => $row['can_manage_data'],
                 'comments' => $comments,
-                'academy' => $row['academy'],
+                'academy_id' => $acId,
                 'CV' => $row['cv'],
             ];
         });
@@ -65,13 +66,14 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
      *
      * @return array
      */
-    private static function getCandidatePositionsNames($row)
+    private static function getCandidatePOsitionsIds($row)
     {
         $academyName = $row['academy'];
         $academy = Academy::where('name', '=', $academyName)->first();
         $acPositions = $academy->positions()->get();
-        $candPosNames = $acPositions->map(fn ($p) => $p->name);
-        $candPosNames = $candPosNames->filter(function ($name) use ($row) {
+        $positionIds = $acPositions->map(fn ($p) => $p->id);
+        $positionIds = $positionIds->filter(function ($id) use ($row) {
+            $name  = Position::find($id)->name;
             $name = strtolower(str_replace(' ', '_', $name));
             $name = str_replace(':', '', $name);
             if ($row[$name] == '1') {
@@ -80,7 +82,7 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
                 false;
             }
         });
-        return $candPosNames->toArray();
+        return $positionIds->toArray();
     }
     /**
      * @param array $row
@@ -121,9 +123,9 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
         $academyPositionsRules = $academyPositions->map(fn ($name) => [$name => 'Required|' . Rule::in(['0', '1'])]);
         $notInAcPositionsRules = $notInAcPositions->map(fn ($name) => [$name => 'Required|' . Rule::in(['0'])]);
         return [
-             'name' => 'required|LTalpha_spaces_dash',
-            'surnname' => 'required|LTalpha_spaces_dash',
-            'city' => 'required|LTalpha_spaces_dash',
+            'name' => 'required|Letter_space|min:2',
+            'surnname' => 'required|Letter_space|min:2',
+            'city' => 'required|Letter_space|min:2',
             'comments' => 'nullable|text|max:1000',
             'gender' => 'required|' . Rule::in(Candidate::GENDERS),
             'email' => 'required|email',
@@ -135,7 +137,7 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
             ...$academyPositionsRules,
             ...$notInAcPositionsRules,
             'status' => 'nullable|' . Rule::in(Candidate::STATUSES),
-            'phone' => 'nullable|regex:/^([\+]{0,1}[0-9]+)$/|min:9',
+            'phone' => 'nullable|phone',
             'CV' => 'nullable|max:10000|mimes:pdf',
 
         ];

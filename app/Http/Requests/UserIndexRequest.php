@@ -3,12 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Validation\Rule;
-use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 
-class RegisterRequest extends FormRequest
+class UserIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,18 +26,28 @@ class RegisterRequest extends FormRequest
      */
     public function rules()
     {
-        $userEmails = User::all()->map(fn ($u) => $u->email);
+
+        $usersIds = User::all()->map(fn ($u) => $u->id);
         return [
-            'email' => 'required|email|' . Rule::notIn($userEmails),
+            'user_id' => 'nullable|' . Rule::in($usersIds)
         ];
     }
 
+    /**
+     * @param null $keys
+     * 
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = parent::all();
+        $data['user_id'] = $this->route('user_id');
+
+        return $data;
+    }
     public function messages()
     {
-        return [ 'email.not_in'=>"A user already exists with this email address" ];
+        return UserService::validationMessages();
     }
-    protected function failedValidation(Validator $validator)
-    {
-        ValidationUtilities::failedValidation($validator);
-    }
+
 }

@@ -2,15 +2,11 @@
 
 namespace App\Services;
 
-use DateTime;
 use Throwable;
 use App\Models\Academy;
 use App\Models\Candidate;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use App\Models\EducationInstitution;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AcademyStatisticsService
@@ -39,7 +35,7 @@ class AcademyStatisticsService
     public static function getStatByEducationInstitutions($academyId)
     {
         $prop = self::PROPERTY_NAMES[1];
-        $stat =  self::getStatByProperty($academyId, $prop);
+        $stat =  self::getStatByProperty($academyId, $prop, propResponseName: 'education_institution');
         return response()->json($stat, 200);
     }
 
@@ -96,9 +92,7 @@ class AcademyStatisticsService
 
         $filterData = ['name' => 'month', 'month_number' => $monthNumber];
 
-
-
-        $filteredCountStat = self::getStatByFilteredCount($academyId, $filterData);
+        $monthCountStat = self::getStatByMonthCount($academyId, $filterData);
         $courseProp = self::PROPERTY_NAMES[3];
         $genderProp = self::PROPERTY_NAMES[2];
         $eduProp = self::PROPERTY_NAMES[1];
@@ -117,11 +111,11 @@ class AcademyStatisticsService
         $statByEdu =  self::getStatByProperty(
             $academyId,
             $eduProp,
-            isPropertyRelation: true,
+            propResponseName: 'education_institution',
             candidateFilterData: $filterData
         );
 
-        $aggregateStat = self::initAggregateStat($filteredCountStat, 'count');
+        $aggregateStat = self::initAggregateStat($monthCountStat, 'count');
         $aggregateStat = self::aggregateStat(
             $aggregateStat,
             $statByCourse,
@@ -135,7 +129,7 @@ class AcademyStatisticsService
         $aggregateStat = self::aggregateStat(
             $aggregateStat,
             $statByEdu,
-            $eduProp
+            'education_institution'
         );
         return response()->json($aggregateStat, 200);
     }
@@ -145,30 +139,40 @@ class AcademyStatisticsService
      *
      * @return array
      */
-    public static function getStatByFilteredCount($academyId, $filterData)
+    public static function getStatByMonthCount($academyId, $filterData)
     {
         $stat = [];
         if ($academyId == null) {
             foreach (Academy::all() as $academy) {
-                $candidates =  $academy->candidates()->get();
-                $candidatesCount = self::getFilteredCandidates($candidates, $filterData)->count();
-                $filteredCountstat = ['academy' => $academy, 'statistic' => ['candidates_count' => $candidatesCount]];
+                $filteredCountstat = self::getFilteredCountStat($academy, $filterData);
                 array_push($stat, $filteredCountstat);
             }
         } else {
-            try {
-                $academy = Academy::findOrFail($academyId);
-            } catch (Throwable $e) {
-                //Rethrown in order to be catched by handler
-                throw new NotFoundHttpException(message: $e->getMessage(), code: 404);
-            }
-            $candidates =  $academy->candidates()->get();
-            $candidatesCount = self::getFilteredCandidates($candidates, $filterData)->count();
-            $filteredCountstat = ['academy' => $academy, 'statistic' => ['candidates_count' => $candidatesCount]];
+            $academy = AcademyService::findAcademyOrFail($academyId);
+            $filteredCountstat = self::getFilteredCountStat($academy, $filterData);
             array_push($stat, $filteredCountstat);
         }
         return $stat;
     }
+
+    /**
+     * @param Academy $academy
+     * @param array $filterData
+     * 
+     * @return array
+     */
+    public static function getFilteredCountStat($academy, $filterData)
+    {
+        $candidates =  $academy->candidates()->get();
+        $candidatesCount = self::getFilteredCandidates($candidates, $filterData)->count();
+        $filteredCountstat = ['academy' => $academy, 'statistic' =>
+        [
+            'month' => $filterData['month_number'],
+            'candidates_count' => $candidatesCount,
+        ]];
+        return $filteredCountstat;
+    }
+
     /**
      * @param array $academiesStat
      * @param string $statPropName
@@ -315,12 +319,8 @@ class AcademyStatisticsService
             }
             return $academiesStat;
         } else {
-            try {
-                $academy = Academy::findOrFail($academyId);
-            } catch (Throwable $e) {
-                //Rethrown in order to be catched by handler
-                throw new NotFoundHttpException(message: "No academy with such id exists", code: 404);
-            }
+            $academy = AcademyService::findAcademyOrFail($academyId);
+
             $academyStat = self::getAcademyStatByProp(
                 $academy,
                 $prop,

@@ -12,6 +12,7 @@ use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator as SupportValidator;
 
 class CandidateUpdateRequest extends FormRequest
 {
@@ -27,27 +28,34 @@ class CandidateUpdateRequest extends FormRequest
 
     public function rules()
     {
-        $candidateId = $this->id;
+        $candidatesIds = Candidate::all()->map(fn ($c) => $c->id);
+        $candidateId = SupportValidator::make(
+            $this->only('candidate_id'),
+            [
+                'candidate_id' => 'required|' . Rule::in($candidatesIds),
+            ],
+            ValidationUtilities::customMessages()
+        )->validate()['candidate_id'];
         $positions = Position::all();
         $institutions = EducationInstitution::all();
         $institutions = $institutions->map(fn ($institution): string => $institution->name);
         $academies = Academy::all();
         $academies = $academies->map(fn ($academy): string => $academy->name);
-        ;
+
 
         if ($this->filled('academy')) {
             $academy = Academy::where('name', '=', $this->input('academy'))->first();
         } else {
-            $academy = Candidate::findOrFail($candidateId)->academy()->get()->first();
+            $academy = Candidate::find($candidateId)->academy()->get()->first();
         }
         $positions = $academy->positions()->get();
         $positionsNames = $positions->map(fn ($position) => $position->name);
         return [
-            'name' => 'nullable|LTalpha_spaces_dash',
-            'surnname' => 'nullable|LTalpha_spaces_dash',
-            'city' => 'nullable|LTalpha_spaces_dash',
+            'name' => 'nullable|Letter_space|min:2',
+            'surnname' => 'nullable|Letter_space|min:2',
+            'city' => 'nullable|Letter_space|min:2',
             'gender' => 'nullable|' . Rule::in(Candidate::GENDERS),
-            'phone' => 'nullable|regex:/^([\+]{0,1}[0-9]*)$/|min:9',
+            'phone' => 'nullable|phone',
             'positions.*' => 'nullable|distinct|' . Rule::in($positionsNames),
             'email' => 'nullable|email',
             'application_date' => 'nullable|date_format:Y-m-d',
@@ -58,6 +66,17 @@ class CandidateUpdateRequest extends FormRequest
             'CV' => 'nullable|max:10000|mimes:pdf'
         ];
     }
+    /**
+     * @param null $keys
+     * 
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = parent::all();
+        $data['candidate_id'] = $this->route('candidate_id');
+        return $data;
+    }
     public function messages()
     {
         return ValidationUtilities::customMessages();
@@ -66,4 +85,5 @@ class CandidateUpdateRequest extends FormRequest
     {
         ValidationUtilities::failedValidation($validator);
     }
+
 }

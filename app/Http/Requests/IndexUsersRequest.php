@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 
-class SendResetLinkRequest extends FormRequest
+class IndexUsersRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +13,7 @@ class SendResetLinkRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -26,11 +24,7 @@ class SendResetLinkRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
+            //
         ];
-    }
-    protected function failedValidation(Validator $validator)
-    {
-        ValidationUtilities::failedValidation($validator);
     }
 }
