@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Candidate;
 use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class SendResetLinkRequest extends FormRequest
+class CommentIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,10 +27,29 @@ class SendResetLinkRequest extends FormRequest
      */
     public function rules()
     {
+        $candidatesId = Candidate::all()->map(fn($c) => $c->id);
         return [
-            'email' => 'required|email',
+            'candidate_id' => 'required|' . Rule::in($candidatesId)
         ];
     }
+
+    /**
+     * @param null $keys
+     *
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = parent::all();
+        $data['candidate_id'] = $this->route('id');
+        return $data;
+    }
+
+    public function messages()
+    {
+        return ValidationUtilities::customMessages();
+    }
+
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);

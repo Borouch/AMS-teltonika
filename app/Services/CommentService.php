@@ -2,63 +2,47 @@
 
 namespace App\Services;
 
-use Throwable;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Models\Candidate;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CommentService
 {
 
 
     /**
-     * @param int|null $id
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $candidateId
+     * @return JsonResponse
      */
-    public static function indexComment($id)
+    public static function indexComment(int $candidateId)
     {
-        if ($id != null) {
-            try {
-                $comment = Comment::findOrFail($id);
-            } catch (Throwable $e) {
-                //Rethrown in order to be catched by handler
-                throw new NotFoundHttpException(
-                    message: "Comment institution with such id does not exist",
-                    code: 404
-                );
-            }
-            return response()->json(['comment' => $comment], 200);
-        } else {
-            return response()->json(['comments' => Comment::all()], 200);
-        }
+        $candidate = Candidate::find($candidateId);
+        $comments = $candidate->comments()->get();
+        return response()->json(['comments' => $comments], 200);
     }
+
 
     /**
      * @param Request $request
      * @param int $candidateId
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public static function storeComment($request, $candidateId)
+    public static function storeComment(Request $request, int $candidateId)
     {
-
-        try {
-            Candidate::findOrFail($candidateId);
-        } catch (Throwable $e) {
-            throw new NotFoundHttpException(message: 'User with such id does not exist', code: 404);
-        }
         $comment = self::saveComment($request->input('content'), $candidateId);
 
         return response()->json(['message' => 'Comment saved successfully', 'comment' => $comment], 200);
     }
+
     /**
      * @param string $content
      * @param int $candidateId
      *
      * @return Comment
      */
-    public static function saveComment($content, $candidateId)
+    public static function saveComment(string $content, int $candidateId)
     {
         $comment = new Comment();
         $comment->content = $content;
@@ -66,27 +50,27 @@ class CommentService
         $comment->save();
         return $comment;
     }
+
     /**
      * @param Request $request
      * @param int $commentId
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
+     * @throws Exception
      */
-    public static function updateComment($request, $commentId)
+    public static function updateComment(Request $request, int $commentId)
     {
+        $comment = Comment::find($commentId);
 
-        try {
-            $comment = Comment::findOrFail($commentId);
-        } catch (Throwable $e) {
-            throw new NotFoundHttpException(message: 'Comment with such id does not exist', code: 404);
-        }
-
+        $hasValue = false;
         if ($request->filled('content')) {
+            $hasValue = true;
             $comment->update(['content' => $request->input('content')]);
         }
-        if ($request->filled('candidate_id')) {
-            $comment->update(['candidate_id' => $request->input('candidate_id')]);
+        if (!$hasValue) {
+            throw new Exception('All valid input fields are empty', 406);
         }
+
         $comment = Comment::find($commentId);
         return response()->json(['message' => 'Comment updated successfully', 'comment' => $comment], 200);
     }

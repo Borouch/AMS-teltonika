@@ -3,13 +3,13 @@
 namespace App\Http\Requests;
 
 use App\Services\RoleService;
+use App\Utilities\ValidationUtilities;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
-use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 
-class RoleStoreRequest extends FormRequest
+class RoleShowRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,10 +28,27 @@ class RoleStoreRequest extends FormRequest
      */
     public function rules()
     {
+        $rolesId = Role::all()->map(fn($r) => $r->id);
         return [
-            'name'=>'required|Letter_space|unique:roles,name|min:2',
-            'guard_name'=>'nullable|Letter_space'
+            'role_id' => 'required|' . Rule::in($rolesId),
         ];
+    }
+
+    /**
+     * @param null $keys
+     *
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = parent::all();
+        $data['role_id'] = $this->route('id');
+        return $data;
+    }
+
+    public function messages()
+    {
+        return ValidationUtilities::customMessages();
     }
 
     protected function failedValidation(Validator $validator)

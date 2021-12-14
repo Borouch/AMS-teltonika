@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Candidate;
+use App\Models\Comment;
 use Illuminate\Validation\Rule;
 use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,16 +27,29 @@ class CommentUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $ids = Candidate::all()->map(fn($c)=>$c->id);
+        $commentsid = Comment::all()->map(fn($c) => $c->id);
         return [
-            'content' => 'nullable|text|max:1000',
-            'candidate_id' => 'nullable|' . Rule::in($ids)
+            'comment_id' => 'required|' . Rule::in($commentsid)
         ];
     }
+
+    /**
+     * @param null $keys
+     *
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = parent::all();
+        $data['comment_id'] = $this->route('id');
+        return $data;
+    }
+
     public function messages()
     {
         return ValidationUtilities::customMessages();
     }
+
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);

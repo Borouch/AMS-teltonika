@@ -32,9 +32,8 @@ class CandidateStoreRequest extends FormRequest
     {
         $institutions = EducationInstitution::all();
         $institutionsId = $institutions->map(fn ($institution): string => $institution->id);
-        var_dump(mb_detect_encoding($this->input('surnname')));
         $acId = $this->input('academy_id');
-        ValidationUtilities::validateAcademy($acId);
+        ValidationUtilities::validateAcademyId($acId);
         $academy = Academy::find($acId);
         $positions = $academy->positions()->get();
         $positionsId = $positions->map(fn ($position) => $position->id);

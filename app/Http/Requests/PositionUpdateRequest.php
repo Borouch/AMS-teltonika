@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Candidate;
+use App\Models\Academy;
+use App\Models\Position;
 use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CommentStoreRequest extends FormRequest
+class PositionUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,23 +28,20 @@ class CommentStoreRequest extends FormRequest
      */
     public function rules()
     {
-
-        $candidatesId = Candidate::all()->map(fn($c) => $c->id);
+        $positionsId = Position::all()->map(fn($pos) => $pos->id);
+        $academiesId = Academy::all()->map(fn($ac) => $ac->id);
         return [
-            'content' => 'required',
-            'candidate_id' => 'required|' . Rule::in($candidatesId)
+            'position_id' => 'required|' . Rule::in($positionsId),
+            'name' => 'nullable|Letter_space|unique:positions,name|min:2',
+            'abbreviation' => 'nullable|Letter_num_space|unique:positions,abbreviation|min:2',
+            'academies.*' => 'nullable|' . Rule::in($academiesId),
         ];
     }
 
-    /**
-     * @param null $keys
-     *
-     * @return array
-     */
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['candidate_id'] = $this->route('id');
+        $data['position_id'] = $this->route('id');
         return $data;
     }
 

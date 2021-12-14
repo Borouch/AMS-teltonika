@@ -2,15 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
-use App\Services\RoleService;
+use App\Models\Academy;
+use App\Models\Position;
 use Illuminate\Validation\Rule;
-use Spatie\Permission\Models\Role;
 use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 
-class RoleIndexRequest extends FormRequest
+class PositionStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,29 +28,21 @@ class RoleIndexRequest extends FormRequest
      */
     public function rules()
     {
-        $rolesIds = Role::all()->map(fn ($r) => $r->id);
+        $acIds = Academy::all()->map(fn($ac)=>$ac->id);
         return [
-            'role_id' => 'nullable|' . Rule::in($rolesIds),
+            'name' => 'required|Letter_space|unique:positions,name|min:2',
+            'abbreviation' => 'nullable|Letter_num_space|unique:positions,abbreviation|min:2',
+            'academies.*' => 'required|' . Rule::in($acIds),
+
         ];
-
     }
 
-    /**
-     * @param null $keys
-     * 
-     * @return array
-     */
-    public function all($keys = null)
-    {
-        $data = parent::all();
-        $data['role_id'] = $this->route('roleId');
-        return $data;
-    }
 
     public function messages()
     {
-        return RoleService::validationMessages();
+        return ValidationUtilities::customMessages();
     }
+
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);

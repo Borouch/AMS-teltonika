@@ -2,43 +2,42 @@
 
 namespace App\Services;
 
-use Throwable;
-use App\Models\Academy;
+use App\Utilities\ValidationUtilities;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 use App\Models\Position;
 use Illuminate\Http\Request;
 use App\Models\AcademiesPositions;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PositionService
 {
 
 
-    
-        /**
-     * @param int|null $id
-     * 
-     * @return \Illuminate\Http\JsonResponse
+    /**
+     * @return JsonResponse
      */
-    public static function indexPositions( $id)
+    public static function indexPositions()
     {
-        if ($id != null) {
-            try {
-                $position= Position::findOrFail($id);
-            } catch (Throwable $e) {
-                //Rethrown in order to be catched by handler
-                throw new NotFoundHttpException(message: "Position with such id does not exist", code: 404);
-            }
-            return response()->json(['position' => $position], 200);
-        }else 
-        {
-            return response()->json(['positions' => Position::all()], 200);
-        }
+        return response()->json(['positions' => Position::with('academies')->get()], 200);
+    }
+
+    /**
+     * @param int $id
+     * @return JsonResponse
+     * @throws ValidationException
+     */
+    public static function showPosition(int $id)
+    {
+        ValidationUtilities::validatePositionId($id);
+        $position = Position::find($id);
+        return response()->json(['position' => $position], 200);
     }
 
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public static function storePosition(Request $request)
     {
@@ -48,17 +47,49 @@ class PositionService
             $position->abbreviation = $request->input('abbreviation');
         }
         $position->save();
-        //Reassigned in order to fetch id
-        $position = Position::all()->last();
-        $academies = $request->input('academies');
-        foreach ($academies as $acId) {
+        $academiesId = $request->input('academies');
+        self::saveAcademyPositions($academiesId,$position->id);
+
+        $position = Position::find($position->id);
+        $position->academies = $position->academies()->get();
+        return response()->json(['message' => 'Position stored successfully', 'position' => $position], 200);
+    }
+
+
+    public static function updatePosition(Request $request, int $id)
+    {
+        $position = Position::find($id);
+        $hasValue=  false;
+        if ($request->filled('name')) {
+            $hasValue=true;
+            $position->update(['name' => $request->input('name')]);
+        }
+        if ($request->filled('abbreviation')) {
+            $hasValue=true;
+            $position->update(['abbreviation' => $request->input('abbreviation')]);
+        }
+        if ($request->filled('academies')) {
+            $hasValue=true;
+            AcademiesPositions::where('position_id','=',$id)->delete();
+            $academiesId = $request->input('academies');
+            self::saveAcademyPositions($academiesId,$id);
+        }
+
+        if (!$hasValue) {
+            throw new Exception('All valid input fields are empty', 406);
+        }
+        $position = Position::find($position->id);
+        $position->academies = $position->academies()->get();
+        return response()->json(['message' => 'Position updated successfully', 'position' => $position], 200);
+    }
+
+    private static function saveAcademyPositions($academiesId,$posId)
+    {
+        foreach ($academiesId as $acId) {
             $acPosition = new AcademiesPositions();
             $acPosition->academy_id = $acId;
-            $acPosition->position_id = $position->id;
+            $acPosition->position_id = $posId;
             $acPosition->save();
         }
-        //Reassigned in order to display associated academies
-        $position = Position::all()->last();
-        return response()->json(['message' => 'Position stored successfully', 'position' => $position], 200);
     }
 }

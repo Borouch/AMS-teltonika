@@ -32,12 +32,12 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
     {
         $candidates = $candidates->map(function ($row) {
 
-            // var_dump(json_encode($row));
+
             $row = $row->toArray();
              CandidatesImport::validationFields($row);
             $unixtime = strtotime($row['application_date']);
             $row['application_date'] = date('Y-m-d', $unixtime);
-            $candPosNames = self::getCandidatePOsitionsIds($row);
+            $candPosNames = self::getCandidatePositionsId($row);
             $comments = explode('; ', $row['comments']);
             $eduId = EducationInstitution::where('name','=',$row['education_institution'])->first()->id;
             $acId = Academy::where('name','=',$row['academy'])->first()->id;
@@ -66,7 +66,7 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
      *
      * @return array
      */
-    private static function getCandidatePOsitionsIds($row)
+    private static function getCandidatePositionsId($row)
     {
         $academyName = $row['academy'];
         $academy = Academy::where('name', '=', $academyName)->first();
@@ -116,17 +116,17 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
         $institutions = $institutions->map(fn ($institution): string => $institution->name);
         $academyName = $row['academy'];
         $academy = Academy::where('name', '=', $academyName)->first();
-        $academyPositions = $academy->positions()->get();
-        $allPositions = Position::all()->map(fn ($p) => $p->name);
-        $academyPositions = $academyPositions->map(fn ($position) => $position->name);
-        $notInAcPositions = $allPositions->diff($academyPositions);
-        $academyPositionsRules = $academyPositions->map(fn ($name) => [$name => 'Required|' . Rule::in(['0', '1'])]);
+        $academyPositionsNames = $academy->positions()->get();
+        $positionsNames = Position::all()->map(fn ($p) => $p->name);
+        $academyPositionsNames = $academyPositionsNames->map(fn ($position) => $position->name);
+        $notInAcPositions = $positionsNames->diff($academyPositionsNames);
+        $academyPositionsRules = $academyPositionsNames->map(fn ($name) => [$name => 'Required|' . Rule::in(['0', '1'])]);
         $notInAcPositionsRules = $notInAcPositions->map(fn ($name) => [$name => 'Required|' . Rule::in(['0'])]);
         return [
             'name' => 'required|Letter_space|min:2',
             'surnname' => 'required|Letter_space|min:2',
             'city' => 'required|Letter_space|min:2',
-            'comments' => 'nullable|text|max:1000',
+            'comments' => 'nullable',
             'gender' => 'required|' . Rule::in(Candidate::GENDERS),
             'email' => 'required|email',
             'application_date' => 'required|date',

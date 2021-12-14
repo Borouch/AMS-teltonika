@@ -2,123 +2,224 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AcademyUpdateRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Services\AcademyService;
 use App\Http\Requests\AcademyStoreRequest;
 use App\Http\Requests\statByMonthRequest;
-use App\Services\AcademyStatisticsService;
+use App\Services\AcademyStatisticService;
 
 class AcademyController extends Controller
 {
+
     /**
      * @param Request $request
-     * @param null|int $id
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index(Request $request,$id = null)
+    public function index(Request $request)
     {
-        return AcademyService::indexAcademy($id);
+        return AcademyService::indexAcademies();
+    }
+
+    /**
+     * @param Request $request
+     * @param int $academyId
+     * @return JsonResponse
+     */
+    public function show(Request $request, int $academyId)
+    {
+        return AcademyService::showAcademy($academyId);
+    }
+
+    /**
+     * @param AcademyUpdateRequest $request
+     * @param int $academyId
+     * @return JsonResponse
+     */
+    public function update(AcademyUpdateRequest $request, int $academyId)
+    {
+        return AcademyService::updateAcademy($request, $academyId);
     }
 
     /**
      * @param AcademyStoreRequest $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public function store(AcademyStoreRequest $request)
     {
-        $request->validated();
         return AcademyService::storeAcademy($request);
     }
 
     /**
      * @param Request $request
-     * @param int $id
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $academyId
+     *
+     * @return JsonResponse
      */
-    public function academyWithPositions(Request $request, $id)
+    public function showAcademyPositions(Request $request, int $academyId)
     {
-        return AcademyService::getAcademyWithPositions($id);
+        return AcademyService::showAcademyPositions($academyId);
     }
 
     /**
      * @param Request $request
-     * @param null|int $academyId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function statByPositions(Request $request, $academyId = null)
+    public function indexStatByPosition(Request $request)
     {
-        return AcademyStatisticsService::getStatByPositions($academyId);
+        $stat = AcademyStatisticService::getIndexStatByPosition();
+        return response()->json($stat);
     }
-    
+
+
     /**
      * @param Request $request
-     * @param int|null $academyId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $academyId
+     *
+     * @return JsonResponse
      */
-    public function statByEducationInstitutions(Request $request, $academyId = null)
+    public function showStatByPosition(Request $request, int $academyId)
     {
-        return AcademyStatisticsService::getStatByEducationInstitutions($academyId);
+        $stat = AcademyStatisticService::getShowStatByPosition($academyId);
+        return response()->json($stat);
     }
 
     /**
      * @param Request $request
-     * @param null|int $academyId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function statByCourses(Request $request, $academyId = null)
+    public function indexStatByEducationInstitution(Request $request)
     {
-        return AcademyStatisticsService::getStatByCourses($academyId);
+        $stat = AcademyStatisticService::getIndexStatByEducationInstitution();
+        return response()->json($stat);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param int $academyId
+     *
+     * @return JsonResponse
+     */
+    public function showStatByEducationInstitution(Request $request, int $academyId)
+    {
+        $stat = AcademyStatisticService::getShowStatByEducationInstitution($academyId);
+        return response()->json($stat);
     }
 
     /**
      * @param Request $request
-     * @param null $academyId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function statByGenders(Request $request, $academyId = null)
+    public function indexStatByCourse(Request $request)
     {
-        return AcademyStatisticsService::getStatByGenders($academyId);
+        $stat = AcademyStatisticService::getIndexStatByCourse();
+        return response()->json($stat);
     }
 
     /**
      * @param Request $request
-     * @param null|int $academyId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $academyId
+     *
+     * @return JsonResponse
      */
-    public function statByStatuses(Request $request, $academyId = null)
+    public function showStatByCourse(Request $request, int $academyId)
     {
-        return AcademyStatisticsService::getStatByStatuses($academyId);
+        $stat = AcademyStatisticService::getShowStatByCourse($academyId);
+        return response()->json($stat);
     }
 
     /**
      * @param Request $request
-     * @param null|int $academyId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function statByApplicationDate(Request $request, $academyId = null)
+    public function indexStatByGender(Request $request)
     {
-        return AcademyStatisticsService::getStatByApplicationDate($academyId);
+        $stat = AcademyStatisticService::getIndexStatByGender();
+        return response()->json($stat);
     }
+
+    /**
+     * @param Request $request
+     * @param int $academyId
+     *
+     * @return JsonResponse
+     */
+    public function showStatByGender(Request $request, int $academyId)
+    {
+        $stat = AcademyStatisticService::getShowStatByGender($academyId);
+        return response()->json($stat);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function indexStatByStatus(Request $request)
+    {
+        $stat = AcademyStatisticService::getIndexStatByStatus();
+        return response()->json($stat);
+    }
+
+    /**
+     * @param Request $request
+     * @param int $academyId
+     *
+     * @return JsonResponse
+     */
+    public function showStatByStatus(Request $request, int $academyId)
+    {
+        $stat = AcademyStatisticService::getShowStatByStatus($academyId);
+        return response()->json($stat);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function indexStatByApplicationDate(Request $request)
+    {
+        $stat = AcademyStatisticService::getIndexStatByApplicationDate();
+        return response()->json($stat);
+    }
+
+    /**
+     * @param Request $request
+     * @param int $academyId
+     *
+     * @return JsonResponse
+     */
+    public function showStatByApplicationDate(Request $request, int $academyId)
+    {
+        $stat = AcademyStatisticService::getShowStatByApplicationDate($academyId);
+        return response()->json($stat);
+    }
+
 
     /**
      * @param statByMonthRequest $request
-     * @param mixed $month
-     * @param null|int $academyId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $monthNumber
+     * @return JsonResponse
      */
-    public function statByMonth(statByMonthRequest $request, $academyId = null,$monthNumber)
+    public function indexStatByMonth(StatByMonthRequest $request, int $monthNumber)
     {
-
-        return AcademyStatisticsService::getStatByMonth($monthNumber, $academyId);
+        $stat = AcademyStatisticService::getIndexStatByMonth($monthNumber);
+        return response()->json($stat);
     }
+
+
+    /**
+     * @param statByMonthRequest $request
+     * @param int $academyId
+     * @param int $monthNumber
+     * @return JsonResponse
+     */
+    public function showStatByMonth(StatByMonthRequest $request, int $academyId, int $monthNumber)
+    {
+        $stat = AcademyStatisticService::getShowStatByMonth($academyId, $monthNumber);
+        return response()->json($stat);
+    }
+
 }

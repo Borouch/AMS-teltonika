@@ -32,11 +32,7 @@ class CandidateIndexRequest extends FormRequest
         $acs = Academy::all()->map(fn($ac)=>$ac->id);
         $pos = Position::all()->map(fn($p)=>$p->id);
         return [
-            'name' => 'nullable|letter_space',
-            'surnname'=>'nullable|letter_space',
             'group_by_academy' => 'nullable|' . Rule::in([0,1]),
-            'email' => 'nullable',
-            'phone'=> 'nullable|numeric|integer',
             'date_from'=>'nullable|date',
             'date_to'=>'nullable|date',
             'academy' => 'nullable|'.Rule::in($acs),
@@ -47,7 +43,7 @@ class CandidateIndexRequest extends FormRequest
     public function messages()
     {
         $msg = ValidationUtilities::customMessages();
-        $msg['positions.*.in']="No position with such id exists";
+        $msg['positions.*.in']='No position with such id exists';
         $msg['group_by_academy']="Field must be either 0 or 1";
         return $msg;
     }

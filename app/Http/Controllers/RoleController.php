@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RoleShowRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Services\RoleService;
 use App\Http\Requests\RoleIndexRequest;
@@ -11,18 +13,41 @@ use App\Http\Requests\RoleUpdateRequest;
 class RoleController extends Controller
 {
 
-    public function index(RoleIndexRequest $request,$roleId = null)
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request)
     {
-        // var_dump(json_encode($request->user()->getRoleNames()));
-        return  RoleService::indexRoles($roleId);
+        return  RoleService::indexRoles();
     }
 
+    /**
+     * @param RoleShowRequest $request
+     * @param int $roleId
+     * @return JsonResponse
+     */
+    public function show (RoleShowRequest $request, int $roleId)
+    {
+        return  RoleService::showRole($roleId);
+    }
+
+    /**
+     * @param RoleStoreRequest $request
+     * @return JsonResponse
+     */
     public function store(RoleStoreRequest $request)
     {
         return RoleService::storeRole($request);
     }
 
-    public function update(RoleUpdateRequest $request,$roleId)
+    /**
+     * @param RoleUpdateRequest $request
+     * @param int $roleId
+     * @return JsonResponse
+     */
+    public function update(RoleUpdateRequest $request, int $roleId)
     {
         return RoleService::updateRole($request,$roleId);
     }

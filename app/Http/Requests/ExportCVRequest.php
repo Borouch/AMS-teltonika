@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Academy;
-use App\Models\Position;
-use Illuminate\Validation\Rule;
+use App\Models\Candidate;
 use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StorePositionRequest extends FormRequest
+class ExportCVRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,18 +27,21 @@ class StorePositionRequest extends FormRequest
      */
     public function rules()
     {
-        $posNames = Position::all()->map(fn($pos)=>$pos->name);
-        $posAbvs= Position::all()->map(fn($pos)=>$pos->abbreviation);
-        $acIds = Academy::all()->map(fn($ac)=>$ac->id);
+        $candidatesId = Candidate::all()->map(fn($c) => $c->id);
+
         return [
-            'name' => 'required|Letter_space|' . Rule::notIn($posNames),
-            'abbreviation' => 'nullable|Letter_num_space|'.Rule::notIn($posAbvs),
-            'academies.*' => 'required|' . Rule::in($acIds),
+            'candidate_id' => 'required|' . Rule::in($candidatesId),
 
         ];
     }
 
-  
+    public function all($keys = null)
+    {
+        $data = parent::all();
+        $data['candidate_id'] = $this->route('id');
+        return $data;
+    }
+
     public function messages()
     {
         return ValidationUtilities::customMessages();

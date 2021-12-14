@@ -27,19 +27,14 @@ class AcademyStoreRequest extends FormRequest
      */
     public function rules()
     {
-        $academiesNames = Academy::all()->map(fn($academy)=>$academy->name)->toArray();
-        $academiesAbv = Academy::all()->map(fn($academy)=>$academy->abbreviation)->toArray();
         return [
-            'name' => 'required|Letter_space|' . Rule::notIn($academiesNames),
-            'abbreviation' => 'nullable|Letter_num_space|' . Rule::notIn($academiesAbv)
+            'name' => 'required|Letter_space|unique:academies,name|min:2',
+            'abbreviation' => 'nullable|Letter_num_space|unique:academies,abbreviation|min:2'
         ];
     }
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);
     }
-    public function messages()
-    {
-        return ValidationUtilities::customMessages();
-    }
+
 }

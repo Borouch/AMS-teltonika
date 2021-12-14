@@ -31,7 +31,7 @@ class RoleUpdateRequest extends FormRequest
         $rolesIds = Role::all()->map(fn ($r) => $r->id);
         return [
             'role_id' => 'required|' . Rule::in($rolesIds),
-            'name' => 'nullable|Letter_space',
+            'name' => 'nullable|Letter_space|unique:roles,name|min:2',
             'guard_name' => 'nullable|Letter_space',
         ];
 
@@ -39,19 +39,19 @@ class RoleUpdateRequest extends FormRequest
 
     /**
      * @param null $keys
-     * 
+     *
      * @return array
      */
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['role_id'] = $this->route('role_id');
+        $data['role_id'] = $this->route('id');
         return $data;
     }
 
     public function messages()
     {
-        return RoleService::validationMessages();
+        return ValidationUtilities::customMessages();
     }
     protected function failedValidation(Validator $validator)
     {

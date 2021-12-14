@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Candidate;
+use App\Models\EducationInstitution;
 use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CommentStoreRequest extends FormRequest
+class EducationInstitutionUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,23 +27,18 @@ class CommentStoreRequest extends FormRequest
      */
     public function rules()
     {
-
-        $candidatesId = Candidate::all()->map(fn($c) => $c->id);
+        $edusId = EducationInstitution::all()->map(fn($edu): string => $edu->id);
         return [
-            'content' => 'required',
-            'candidate_id' => 'required|' . Rule::in($candidatesId)
+            'name' => 'nullable|Letter_space|unique:education_institutions,name|min:2',
+            'abbreviation'=>'nullable|Letter_space||unique:education_institutions,abbreviation|min:2',
+            'education_institution_id' => 'required|' . Rule::in($edusId)
         ];
     }
 
-    /**
-     * @param null $keys
-     *
-     * @return array
-     */
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['candidate_id'] = $this->route('id');
+        $data['education_institution_id'] = $this->route('id');
         return $data;
     }
 

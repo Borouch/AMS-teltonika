@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserShowRequest;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Http\Requests\UserIndexRequest;
@@ -11,22 +12,22 @@ use App\Http\Requests\RemoveRoleRequest;
 class UserController extends Controller
 {
 
-    /**
-     * @param UserIndexRequest $request
-     * @param int|null $id=null
-     * 
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index(UserIndexRequest $request, $userId=null)
+
+    public function index(Request $request)
     {
-        return UserService::indexUsers($userId);
+        return UserService::indexUsers();
+    }
+
+    public function show(UserShowRequest $request, $userId)
+    {
+        return UserService::showUsers($userId);
     }
 
 
     /**
      * @param AssignRoleRequest $request
      * @param int $userId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function assignRoles(AssignRoleRequest $request, $userId)
@@ -38,7 +39,7 @@ class UserController extends Controller
     /**
      * @param RemoveRoleRequest $request
      * @param mixed $userId
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function removeRoles(RemoveRoleRequest $request, $userId)

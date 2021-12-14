@@ -2,34 +2,57 @@
 
 namespace App\Services;
 
+use App\Utilities\ValidationUtilities;
 use Throwable;
 use App\Models\Academy;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use  \Illuminate\Http\JsonResponse;
 
 class AcademyService
 {
+
     /**
-     * @param int|null $id
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public static function indexAcademy( $id)
+    public static function indexAcademies()
     {
-        if ($id != null) {
-            $academy = self::findAcademyOrFail($id);
-            return response()->json(['academy' => $academy], 200);
-        }else 
-        {
-            return response()->json(['academies' => Academy::all()], 200);
+        return response()->json(['academies' => Academy::all()], 200);
+    }
+
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public static function showAcademy(int $id)
+    {
+        ValidationUtilities::validateAcademyId($id);
+        $academy = Academy::find($id);
+        return response()->json(['academy' => $academy], 200);
+    }
+
+    public static function updateAcademy(Request $request, int $id)
+    {
+        $hasValue = false;
+        $academy = Academy::find($id);
+        if ($request->filled('name')) {
+            $hasValue = true;
+            $academy->update(['name' => $request->input('name')]);
         }
+        if ($request->filled('abbreviation')) {
+            $academy->update(['abbreviation' => $request->input('abbreviation')]);
+        }
+        if (!$hasValue) {
+            throw new Exception('All valid input fields are empty', 406);
+        }
+        $academy = Academy::find($id);
+        return response()->json(['message' => 'Academy updated successfully', 'academy' => $academy]);
     }
 
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public static function storeAcademy(Request $request)
     {
@@ -47,28 +70,14 @@ class AcademyService
     /**
      * @param int $id
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public static function getAcademyWithPositions($id)
+    public static function showAcademyPositions(int $id)
     {
-        $academy = self::findAcademyOrFail($id);
+        ValidationUtilities::validateAcademyId($id);
+        $academy = Academy::find($id);
         $academy->positions = $academy->positions->makeHidden('academies')->toArray();
         return response()->json(['academy' => $academy], 200);
     }
 
-    /**
-     * @param int $id
-     * 
-     * @return Academy
-     */
-    public static function findAcademyOrFail($id)
-    {
-        try {
-            $academy= Academy::findOrFail($id);
-        } catch (Throwable $e) {
-            //Rethrown in order to be catched by handler
-            throw new NotFoundHttpException(message: "Academy with such id does not exist", code: 404);
-        }
-        return $academy;
-    }
 }

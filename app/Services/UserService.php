@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Validator;
@@ -18,9 +19,9 @@ class UserService
             'user_id.in' => "user with such id does not exist"
         ];
     }
+
     public static function storeInitialAdminUser()
     {
-
         $data = Validator::make(
             [
                 'email' => config('app.admin_email_address'),
@@ -31,48 +32,46 @@ class UserService
                 'password' => 'required'
             ],
             [
-                'email.email' => "Admin email is incorrect format"
+                'email.email' => "Admin email is in incorrect format"
             ]
         )->validate();
         $data['password'] = bcrypt($data['password']);
         $admin = User::Create($data);
         $admin->assignRole('admin');
-        
     }
 
+
     /**
-     * @param int|null $userId
-     * 
-     * @return  \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public static function indexUsers($userId)
+    public static function indexUsers()
     {
-        if ($userId != null) {
-            $user = User::find($userId);
-            return response()->json(['user' => $user]);
-        }
         return response()->json(['users' => User::all()]);
     }
 
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public static function showUsers(int $id)
+    {
+        $user = User::find($id);
+        return response()->json(['user' => $user]);
+    }
 
-
-
-    
 
     /**
      * @param Request $request
      * @param int $userId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public static function assignUserRoles(Request $request, $userId)
     {
-
         $user = User::find($userId);
         $roles = $request->roles;
-        foreach ($roles as $roleId)
-        {
-            $role=Role::find($roleId);
+        foreach ($roles as $roleId) {
+            $role = Role::find($roleId);
             $user->assignRole($role->name);
         }
         return response()->json([
@@ -84,15 +83,14 @@ class UserService
     /**
      * @param Request $request
      * @param int $userId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public static function removeUserRoles(Request $request, $userId)
     {
         $user = User::find($userId);
         $roles = $request->roles;
-        foreach ($roles as $roleId)
-        {
+        foreach ($roles as $roleId) {
             $role = Role::find($roleId);
             $user->removeRole($role->name);
         }

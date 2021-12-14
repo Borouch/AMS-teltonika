@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CandidateShowRequest;
+use App\Http\Requests\ExportCVRequest;
 use Exception;
 use App\Models\Candidate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Services\CandidateService;
 use App\Http\Requests\CandidateIndexRequest;
@@ -12,25 +15,36 @@ use App\Http\Requests\CandidateFilterRequest;
 use App\Http\Requests\CandidateImportRequest;
 use App\Http\Requests\CandidateSearchRequest;
 use App\Http\Requests\CandidateUpdateRequest;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CandidateController extends Controller
 {
+
     /**
      * @param CandidateIndexRequest $request
-     * @param null|string $shouldGroupByAcademy=null
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index(CandidateIndexRequest $request,$id=null)
+    public function index(CandidateIndexRequest $request)
     {
 
-        return Candidateservice::indexCandidates($id,$request);
+        return Candidateservice::indexCandidates($request);
+    }
+
+    /**
+     * @param CandidateShowRequest $request
+     * @param int $candidateId
+     * @return JsonResponse
+     */
+    public function show(CandidateShowRequest $request, int $candidateId)
+    {
+
+        return Candidateservice::showCandidate($candidateId);
     }
 
     /**
      * @param CandidateStoreRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(CandidateStoreRequest $request)
     {
@@ -38,13 +52,14 @@ class CandidateController extends Controller
         return response()->json(CandidateService::storeCandidate($request), 200);
     }
 
+
     /**
      * @param CandidateUpdateRequest $request
      * @param int $candidateId
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function update(CandidateUpdateRequest $request, $candidateId)
+    public function update(CandidateUpdateRequest $request, int $candidateId)
     {
         return CandidateService::updateCandidate($request, $candidateId);
     }
@@ -53,7 +68,7 @@ class CandidateController extends Controller
     /**
      * @param CandidateImportRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function import(CandidateImportRequest $request)
     {
@@ -62,22 +77,20 @@ class CandidateController extends Controller
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return BinaryFileResponse
      */
     public function export(Request $request)
     {
-
         return CandidateService::exportCandidates($request);
     }
 
     /**
-     * @param Request $request
+     * @param ExportCVRequest $request
      * @param int $candidateId
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return BinaryFileResponse
+     * @throws Exception
      */
-    public function exportCV(Request $request, $candidateId)
+    public function exportCV(ExportCVRequest $request, int $candidateId)
     {
         return CandidateService::exportCV($candidateId);
     }

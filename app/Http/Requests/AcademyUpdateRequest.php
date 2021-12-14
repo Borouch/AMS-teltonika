@@ -2,14 +2,15 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Candidate;
+use App\Models\Academy;
 use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CommentStoreRequest extends FormRequest
+class AcademyUpdateRequest extends FormRequest
 {
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -28,11 +29,18 @@ class CommentStoreRequest extends FormRequest
     public function rules()
     {
 
-        $candidatesId = Candidate::all()->map(fn($c) => $c->id);
+        $academiesId = Academy::all()->map(fn($ac) => $ac->id);
         return [
-            'content' => 'required',
-            'candidate_id' => 'required|' . Rule::in($candidatesId)
+            'academy_id' => 'required|' . Rule::in($academiesId),
+            'name' => 'nullable|Letter_space|unique:academy,name|min:2',
+            'abbreviation' => 'nullable|Letter_num_space|unique:academy,abbreviation|min:2',
+
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
     }
 
     /**
@@ -43,17 +51,12 @@ class CommentStoreRequest extends FormRequest
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['candidate_id'] = $this->route('id');
+        $data['academy_id'] = $this->route('id');
         return $data;
     }
 
     public function messages()
     {
         return ValidationUtilities::customMessages();
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        ValidationUtilities::failedValidation($validator);
     }
 }

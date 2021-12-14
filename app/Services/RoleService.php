@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\JsonResponse;
 use Throwable;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,13 +12,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class RoleService
 {
 
-    public static function validationMessages()
-    {
-        return [
-            'role_id.in'=> 'Role with such id does not exist',
-            'name.not_in'=>'A name with such value already exists'
-        ];
-    }
 
     /**
      * @return void
@@ -32,24 +26,28 @@ class RoleService
     }
 
     /**
-     * @param int|null $roleId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public static function indexRoles($roleId)
+    public static function indexRoles()
     {
-        
-        if ($roleId != null) {
-            $role = Role::find($roleId);
-            return response()->json(['role' => $role], 200);
-        }
         return response()->json(['roles' => Role::all()], 200);
     }
 
     /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public static function showRole(int $id)
+    {
+
+        return response()->json(['role' => Role::find($id)], 200);
+
+    }
+
+    /**
      * @param Request $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public static function storeRole(Request $request)
     {
@@ -60,13 +58,12 @@ class RoleService
 
     /**
      * @param Request $request
-     * @param mixed $roleId
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $id
+     * @return JsonResponse
      */
-    public static function updateRole(Request $request, $roleId)
+    public static function updateRole(Request $request, int $id)
     {
-        $role = Role::find($roleId);
+        $role = Role::find($id);
         if ($request->filled('name')) {
             $role->update($request->only(['name']));
         }

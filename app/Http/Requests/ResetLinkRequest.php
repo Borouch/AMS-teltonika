@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Utilities\ValidationUtilities;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
-class IndexUsersRequest extends FormRequest
+class ResetLinkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +15,7 @@ class IndexUsersRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,11 @@ class IndexUsersRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'email' => 'required|email',
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
     }
 }

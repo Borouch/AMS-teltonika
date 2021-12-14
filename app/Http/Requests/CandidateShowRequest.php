@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
-use App\Services\UserService;
-use Illuminate\Validation\Rule;
+use App\Models\Candidate;
+use App\Utilities\ValidationUtilities;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UserIndexRequest extends FormRequest
+class CandidateShowRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,28 +27,32 @@ class UserIndexRequest extends FormRequest
      */
     public function rules()
     {
+        $candidatesId = Candidate::all()->map(fn($c) => $c->id);
 
-        $usersIds = User::all()->map(fn ($u) => $u->id);
         return [
-            'user_id' => 'nullable|' . Rule::in($usersIds)
+            'candidate_id' => 'required|' . Rule::in($candidatesId),
         ];
     }
 
     /**
      * @param null $keys
-     * 
+     *
      * @return array
      */
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['user_id'] = $this->route('user_id');
-
+        $data['candidate_id'] = $this->route('id');
         return $data;
     }
+
     public function messages()
     {
-        return UserService::validationMessages();
+        return ValidationUtilities::customMessages();
     }
 
+    protected function failedValidation(Validator $validator)
+    {
+        ValidationUtilities::failedValidation($validator);
+    }
 }

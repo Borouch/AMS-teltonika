@@ -51,7 +51,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $academy_id
  * @property-read \Illuminate\Database\Eloquent\Collection|CandidateComment[] $comments
  * @property-read int|null $comments_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Position[] $positions
+ * @property-read \Illuminate\Database\Eloquent\Collection|Position[] $positions
  * @property-read int|null $positions_count
  * @method static \Illuminate\Database\Eloquent\Builder|Candidate whereAcademyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Candidate whereEducationInstitutionId($value)
@@ -63,7 +63,9 @@ class Candidate extends Model
     use HasFactory;
 
     protected $with = ['positions','comments','educationInstitution','academy'];
+
     protected $hidden = ['created_at','updated_at','education_institution_id','academy_id'];
+
     public const COURSES = [
         'first stage 1',
         'first stage 2',
@@ -81,31 +83,43 @@ class Candidate extends Model
         'male',
         'female',
     ];
+
     public const STATUSES =
     [
         'candidate',
         'called for interview',
         'interviewed',
-        'accepted for intership',
+        'accepted for internship',
         'recruited',
-        'not accepted for intership',
+        'not accepted for internship',
         'not recruited',
         'declined',
         'next'
     ];
 
+    public function scopeSearch($query,$search)
+    {
+        return $query->where('name', 'like', "%$search%")
+        ->orwhere('surnname', 'like', "%$search%")
+        ->orwhere('email', 'like', "%$search%")
+        ->orwhere('phone', 'like', "%$search%");
+    }
+
     public function positions()
     {
         return $this->belongsToMany(Position::class, 'candidates_positions');
     }
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
+
     public function educationInstitution()
     {
         return $this->belongsTo(EducationInstitution::class);
     }
+
     public function academy()
     {
         return $this->belongsTo(Academy::class);
