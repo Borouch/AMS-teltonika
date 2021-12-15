@@ -41,7 +41,6 @@ class CandidateStoreRequest extends FormRequest
             'name' => 'required|Letter_space|min:2',
             'surnname' => 'required|Letter_space|min:2',
             'city' => 'required|Letter_space|min:2',
-            'comments' => 'nullable|text|max:1000',
             'gender' => 'required|' . Rule::in(Candidate::GENDERS),
             'email' => 'required|email',
             'application_date' => 'required|date_format:Y-m-d',

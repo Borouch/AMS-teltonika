@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Models\Academy;
@@ -89,11 +90,7 @@ class CandidateService
                     return null;
                 }
             }
-            if ($inputField == 'comments' && $dataSource->filled('comments')) {
-                return [$dataSource->input($inputField)];
-            } else {
-                return $dataSource->input($inputField);
-            }
+            return $dataSource->input($inputField);
         } else { //Data from candidates import
             return $dataSource[$inputField];
         }
@@ -127,7 +124,7 @@ class CandidateService
         $candidate->academy_id = $acId;
         $phone = self::getStoreFieldInput($dataSource, 'phone');
         $status = self::getStoreFieldInput($dataSource, 'status');
-        $comments = self::getStoreFieldInput($dataSource, 'comments');
+        $comment = self::getStoreFieldInput($dataSource, 'comment');
         $CV = self::getStoreFieldInput($dataSource, 'CV');
         if ($phone != null) {
             $candidate->phone = $phone;
@@ -139,12 +136,8 @@ class CandidateService
             $candidate->CV = $CV;
         }
         $candidate->save();
-        if ($comments != null) {
-            foreach ($comments as $comment) {
-                if ($comment != '') {
-                    CommentService::saveComment($comment, $candidate->id);
-                }
-            }
+        if ($comment && $comment != '') {
+            CommentService::saveComment($comment, $candidate->id);
         }
         $positions = self::getStoreFieldInput($dataSource, 'positions');
         self::storeCandidatePosition($positions, $candidate->id);
@@ -279,7 +272,11 @@ class CandidateService
     }
 
 
-    public static function searchCandidates($searchQuery)
+    /**
+     * @param array $searchQuery
+     * @return Candidate[]|Builder[]|Collection
+     */
+    public static function searchCandidates(array $searchQuery)
     {
         if (isset($searchQuery['search'])) {
             $searchQuery = $searchQuery['search'];

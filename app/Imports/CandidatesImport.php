@@ -23,10 +23,11 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
           'delimiter' => ","
         ];
     }
+
+
     /**
      * @param Collection $candidates
-     *
-     * @return array
+     * @return Collection
      */
     public static function processCandidates(Collection $candidates)
     {
@@ -38,7 +39,6 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
             $unixtime = strtotime($row['application_date']);
             $row['application_date'] = date('Y-m-d', $unixtime);
             $candPosNames = self::getCandidatePositionsId($row);
-            $comments = explode('; ', $row['comments']);
             $eduId = EducationInstitution::where('name','=',$row['education_institution'])->first()->id;
             $acId = Academy::where('name','=',$row['academy'])->first()->id;
             return [
@@ -54,7 +54,7 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
                 'status' => $row['status'],
                 'positions' => $candPosNames,
                 'can_manage_data' => $row['can_manage_data'],
-                'comments' => $comments,
+                'comment' => $row['comment'],
                 'academy_id' => $acId,
                 'CV' => $row['cv'],
             ];
@@ -66,7 +66,7 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
      *
      * @return array
      */
-    private static function getCandidatePositionsId($row)
+    private static function getCandidatePositionsId(array $row)
     {
         $academyName = $row['academy'];
         $academy = Academy::where('name', '=', $academyName)->first();
@@ -79,7 +79,7 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
             if ($row[$name] == '1') {
                 return true;
             } else {
-                false;
+                return false;
             }
         });
         return $positionIds->toArray();
