@@ -48,7 +48,7 @@ class PositionService
         }
         $position->save();
         $academiesId = $request->input('academies');
-        self::saveAcademyPositions($academiesId,$position->id);
+        self::storeAcademyPositions($academiesId, $position->id);
 
         $position = Position::find($position->id);
         $position->academies = $position->academies()->get();
@@ -56,23 +56,29 @@ class PositionService
     }
 
 
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     * @throws Exception
+     */
     public static function updatePosition(Request $request, int $id)
     {
         $position = Position::find($id);
-        $hasValue=  false;
+        $hasValue = false;
         if ($request->filled('name')) {
-            $hasValue=true;
+            $hasValue = true;
             $position->update(['name' => $request->input('name')]);
         }
         if ($request->filled('abbreviation')) {
-            $hasValue=true;
+            $hasValue = true;
             $position->update(['abbreviation' => $request->input('abbreviation')]);
         }
         if ($request->filled('academies')) {
-            $hasValue=true;
-            AcademiesPositions::where('position_id','=',$id)->delete();
+            $hasValue = true;
+            AcademiesPositions::where('position_id', '=', $id)->delete();
             $academiesId = $request->input('academies');
-            self::saveAcademyPositions($academiesId,$id);
+            self::storeAcademyPositions($academiesId, $id);
         }
 
         if (!$hasValue) {
@@ -83,7 +89,12 @@ class PositionService
         return response()->json(['message' => 'Position updated successfully', 'position' => $position], 200);
     }
 
-    private static function saveAcademyPositions($academiesId,$posId)
+    /**
+     * @param array $academiesId
+     * @param int $posId
+     * @return void
+     */
+    public static function storeAcademyPositions(array $academiesId, int $posId)
     {
         foreach ($academiesId as $acId) {
             $acPosition = new AcademiesPositions();

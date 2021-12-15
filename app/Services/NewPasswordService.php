@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -12,12 +13,12 @@ class NewPasswordService
 {
     /**
      * @param Request $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public static function resetPassword(Request $request)
     {
-        
+
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
@@ -38,11 +39,12 @@ class NewPasswordService
             'message' => 'Password reset successfully'
         ]);
     }
-    
+
+
     /**
      * @param Request $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
+     * @throws Exception
      */
     public static function sendPasswordResetLink(Request $request)
     {

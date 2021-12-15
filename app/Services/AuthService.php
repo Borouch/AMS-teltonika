@@ -3,19 +3,20 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Auth\AuthenticationException;
 use App\Notifications\RegistrationNotification;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
     /**
      * @param Request $request
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public static function register(Request $request)
     {
@@ -31,20 +32,22 @@ class AuthService
 
         return response()->json([
             "message" =>
-            "Registration successful, an email has been sent to user email address with its credentials",
+                "Registration successful, an email has been sent to user email address with its credentials",
         ]);
     }
 
     public static function login(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $auth = $request->user();
-            $token =  $auth->createToken('API token')->plainTextToken;
-
-            return response()->json(["message" => "Login was successful", 'token' => $token]);
-        } else {
-            throw new AuthenticationException('User with these credentials does not exist');
+        $credentials = $request->only('email', 'password');
+        try {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                throw new JWTException('Invalid Credentials');
+            }
+        } catch (JWTException $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
         }
+        return response()->json(["message" => "Login was successful", 'token' => $token]);
     }
 }

@@ -32,7 +32,10 @@ use Illuminate\Database\Eloquent\Model;
 class Position extends Model
 {
     use HasFactory;
-
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s'
+    ];
     protected $with = [];
     protected $hidden = ['updated_at','pivot'];
     public const ACADEMIES_POSITIONS = [

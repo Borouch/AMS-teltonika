@@ -37,7 +37,7 @@ class RemoveRoleRequest extends FormRequest
                 'user_id' => 'required|' . Rule::in($usersIds),
             ],
 
-            UserService::validationMessages()
+            ValidationUtilities::customMessages()
 
         )->validate();
         $user = User::find($data['user_id']);
@@ -49,13 +49,13 @@ class RemoveRoleRequest extends FormRequest
 
     /**
      * @param null $keys
-     * 
+     *
      * @return array
      */
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['user_id'] = $this->route('user_id');
+        $data['user_id'] = $this->route('id');
         return $data;
     }
 
@@ -65,6 +65,7 @@ class RemoveRoleRequest extends FormRequest
             'roles.*.in' => "User does not have role with such id"
         ];
     }
+
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);

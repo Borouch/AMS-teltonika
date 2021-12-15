@@ -3,10 +3,8 @@
 namespace App\Services;
 
 use App\Utilities\ValidationUtilities;
-use Throwable;
 use App\Models\Academy;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use  \Illuminate\Http\JsonResponse;
 
 class AcademyService

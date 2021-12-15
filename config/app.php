@@ -178,6 +178,8 @@ return [
 
         Maatwebsite\Excel\ExcelServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
     ],
 
     /*
@@ -232,9 +234,10 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'JWTAuth'=>Tymon\JWTAuth\Facades\JWTAuth::class,
 
     ],
-    
+
     /**   Will be used to create initial user with admin role    */
     'admin_email_address'=> env('ADMIN_EMAIL_ADDRESS','admin@teltonika.com'),
     'admin_password'=> env('ADMIN_PASSWORD','demo'),

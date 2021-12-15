@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $academies = Academy::ACADEMIES;
-        Academy::insert($academies);
+        Academy::upsert($academies,['name','abbreviation']);
         AcademiesPositionsService::storeInitialAcademiesPositions();
         EducationInstitutionService::storeInitialEdu();
         RoleService::storeInitialRoles();

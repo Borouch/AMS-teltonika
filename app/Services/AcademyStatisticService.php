@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Models\Academy;
 use App\Models\Candidate;
+use App\Utilities\ValidationUtilities;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use App\Models\EducationInstitution;
+use Illuminate\Validation\ValidationException;
 
 class AcademyStatisticService
 {
@@ -226,10 +228,12 @@ class AcademyStatisticService
      * @param array $filterData
      *
      * @return array
+     * @throws ValidationException
      */
     public static function getShowStatByMonthCount(int $academyId, array $filterData)
     {
-        $academy = AcademyService::findAcademyOrFail($academyId);
+        ValidationUtilities::validateAcademyId($academyId);
+        $academy = Academy::find($academyId);
         $filteredCountstat = self::getMonthCountStat($academy, $filterData);
         return [$filteredCountstat];
     }
@@ -432,6 +436,7 @@ class AcademyStatisticService
      * @param array|null $candidateFilterData
      *
      * @return array
+     * @throws ValidationException
      */
     public static function showStatByProperty(
         int    $academyId,
@@ -441,8 +446,8 @@ class AcademyStatisticService
         array|null  $candidateFilterData = null
     ): array
     {
-        $academy = AcademyService::findAcademyOrFail($academyId);
-
+        ValidationUtilities::validateAcademyId($academyId);
+        $academy = Academy::find($academyId);
         $academyStat = self::getAcademyStatByProp(
             $academy,
             $prop,

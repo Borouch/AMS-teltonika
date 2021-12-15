@@ -28,6 +28,10 @@ use Illuminate\Database\Eloquent\Model;
 class EducationInstitution extends Model
 {
     use HasFactory;
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s'
+    ];
     protected $hidden = ['updated_at'];
     public const EDUCATION_INSTITUTIONS =
     [

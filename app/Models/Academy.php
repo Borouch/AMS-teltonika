@@ -31,7 +31,11 @@ class Academy extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['updated_at','pivot'];
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s'
+    ];
+    protected $hidden = ['updated_at', 'pivot'];
 
     public const ACADEMIES = [
         ['name' => 'Business to business', 'abbreviation' => 'B2B'],
@@ -42,6 +46,7 @@ class Academy extends Model
     {
         return $this->belongsToMany(Position::class, 'academies_positions');
     }
+
     public function candidates()
     {
         return $this->hasMany(Candidate::class);

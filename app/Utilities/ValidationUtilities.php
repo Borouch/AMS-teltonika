@@ -68,7 +68,7 @@ class ValidationUtilities
     {
         $positionsId = Position::all()->map(fn($pos): string => $pos->id);
         Validator::make(
-            ['position_id' =>  $posId],
+            ['position_id' => $posId],
             ['position_id' => 'required|' . Rule::in($positionsId)],
             self::customMessages()
         )->validate();
@@ -80,6 +80,7 @@ class ValidationUtilities
     public static function customMessages()
     {
         return [
+            'group_by_academy.in' => 'Field must be either 0 or 1',
             'positions.*.in' =>
                 'Input position doesn\'t exist it or does not belong to the academy to which candidate is applying',
             'course.in' => 'No course with such id exists',
@@ -95,10 +96,10 @@ class ValidationUtilities
             'academy_id.in' => "No academy with such id exists",
             'comment_id.in' => "No comment with such id exists",
             'position_id.in' => "No position with such id exists",
-            'role_id.in'=> 'No role with such id exists',
-            'user_id.in'=> 'No user with such id exists',
+            'role_id.in' => 'No role with such id exists',
+            'user_id.in' => 'No user with such id exists',
             'roles.*.in' => "No role with such id exists",
-
+            'roles.*.not_in' => "User already has a role with such id",
         ];
     }
 }

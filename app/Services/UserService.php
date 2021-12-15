@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -11,15 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class UserService
 {
-    public static function validationMessages()
-    {
-        return [
-            'roles.*.in' => "Role with such id does not exist",
-            'roles.*.not_in' => "User already has role with such id",
-            'user_id.in' => "user with such id does not exist"
-        ];
-    }
-
     public static function storeInitialAdminUser()
     {
         $data = Validator::make(
@@ -39,7 +31,6 @@ class UserService
         $admin = User::Create($data);
         $admin->assignRole('admin');
     }
-
 
     /**
      * @return JsonResponse
@@ -62,13 +53,16 @@ class UserService
 
     /**
      * @param Request $request
-     * @param int $userId
-     *
+     * @param int $id
      * @return JsonResponse
+     * @throws Exception
      */
-    public static function assignUserRoles(Request $request, $userId)
+    public static function assignUserRoles(Request $request, int $id)
     {
-        $user = User::find($userId);
+        $user = User::find($id);
+        if ($request->isNotFilled('roles')) {
+            throw new Exception('All valid input fields are empty', 406);
+        }
         $roles = $request->roles;
         foreach ($roles as $roleId) {
             $role = Role::find($roleId);
@@ -80,15 +74,19 @@ class UserService
         ]);
     }
 
+
     /**
      * @param Request $request
      * @param int $userId
-     *
      * @return JsonResponse
+     * @throws Exception
      */
-    public static function removeUserRoles(Request $request, $userId)
+    public static function removeUserRoles(Request $request, int $userId)
     {
         $user = User::find($userId);
+        if ($request->isNotFilled('roles')) {
+            throw new Exception('All valid input fields are empty', 406);
+        }
         $roles = $request->roles;
         foreach ($roles as $roleId) {
             $role = Role::find($roleId);

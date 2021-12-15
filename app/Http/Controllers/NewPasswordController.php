@@ -6,13 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Services\NewPasswordService;
 use App\Http\Requests\PasswordResetRequest;
 use App\Http\Requests\ResetLinkRequest;
+use Exception;
+use Illuminate\Http\JsonResponse;
 
 class NewPasswordController extends Controller
 {
+
     /**
      * @param ResetLinkRequest $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
+     * @throws Exception
      */
     public function resetLink(ResetLinkRequest $request)
     {
@@ -24,7 +27,7 @@ class NewPasswordController extends Controller
     /**
      * @param PasswordResetRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function reset(PasswordResetRequest $request)
     {

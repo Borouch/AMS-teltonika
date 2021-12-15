@@ -5,7 +5,6 @@ namespace App\Services;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Throwable;
 use App\Models\Academy;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
@@ -13,7 +12,6 @@ use App\Exports\CandidatesExport;
 use App\Imports\CandidatesImport;
 use App\Models\CandidatesPositions;
 use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\JsonResponse;
 
 class CandidateService
@@ -27,13 +25,13 @@ class CandidateService
     {
         $groupByAcademy = $request->input('group_by_academy');
 
-        $candidates = self::searchCandidates($request);
+        $candidates = self::searchCandidates($request->only('search'));
         $candidates = self::filterCandidates($candidates, $request);
         if ($groupByAcademy == 1) {
             $groupedCandidates = [];
             $academies = Academy::all();
-            foreach ($academies as $ac) {
-                $group = ['academy' => $ac->name, 'candidates' => []];
+            foreach ($academies as $academy) {
+                $group = ['academy' => $academy, 'candidates' => []];
                 $groupedCandidates[] = $group;
             }
             foreach ($candidates as $candidate) {
@@ -65,8 +63,8 @@ class CandidateService
     {
         $academy = Academy::find($candidate->academy_id);
         foreach ($groupedCandidates as &$group) {
-            if ($group['academy'] == $academy->name) {
-                $group['candidates'][] = $candidate;
+            if ($group['academy'] == $academy) {
+                $group['candidates'][] = $candidate->makeHidden('academy');
                 break;
             }
         }
@@ -75,12 +73,12 @@ class CandidateService
 
 
     /**
-     * This method allows for @see storeCandidate() to store candidates from multiple data sources
-     * Namely, from HTTP request and excel import @see importCandidates()
+     * This method allows for storeCandidate() to store candidates from multiple data sources
+     * Namely, from HTTP request and excel import
      * @param Request|array $dataSource
      * @param string $inputField
      * @return array|bool|mixed|string|null
-     */
+     **/
     public static function getStoreFieldInput(Request|array $dataSource, string $inputField)
     {
         if ($dataSource instanceof Request) { //Data from request
@@ -236,7 +234,6 @@ class CandidateService
         ], 200);
     }
 
-
     /**
      *  Candidate positions which do not belong to new academy will be deleted
      *  as candidate shouldn't be able to apply to positions which do not
@@ -281,18 +278,16 @@ class CandidateService
         }
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Collection
-     */
-    public static function searchCandidates(Request $request)
+
+    public static function searchCandidates($searchQuery)
     {
-        $search = $request->input('search');
-        if ($search == null) {
+        if (isset($searchQuery['search'])) {
+            $searchQuery = $searchQuery['search'];
+        }
+        if ($searchQuery == null) {
             return Candidate::all();
         }
-        $searchTerms = explode(' ', $search);
+        $searchTerms = explode(' ', $searchQuery);
         $candidates = null;
         foreach ($searchTerms as $term) {
             $matchCandidates = Candidate::search($term)->get();
@@ -318,12 +313,12 @@ class CandidateService
     {
         if ($request->filled('date_from')) {
             $dateFrom = $request->input('date_from');
-            $candidates = $candidates->where('application_date', '>=', "$dateFrom");
+            $candidates = $candidates->where('application_date', '>=', "$dateFrom")->values();
         }
 
         if ($request->filled('date_to')) {
             $dateTo = $request->input('date_to');
-            $candidates = $candidates->where('application_date', '<', "$dateTo");
+            $candidates = $candidates->where('application_date', '<', "$dateTo")->values();
         }
 
         if ($request->filled('positions')) {
@@ -332,6 +327,7 @@ class CandidateService
                 $candidatePositions = $candidate->positions()
                     ->get()
                     ->map(fn($pos) => $pos->id)->toArray();
+
                 $count = count(array_intersect($candidatePositions, $inputPositions));
                 return $count == count($inputPositions);
             });
@@ -339,12 +335,12 @@ class CandidateService
 
         if ($request->filled('academy')) {
             $academy = $request->input('academy');
-            $candidates = $candidates->where('academy', '=', "$academy");
+            $candidates = $candidates->where('academy', '=', "$academy")->values();
         }
 
         if ($request->filled('course')) {
             $course = $request->input('course');
-            $candidates = $candidates->where('course', '=', "$course");
+            $candidates = $candidates->where('course', '=', "$course")->values();
         }
 
         return $candidates;

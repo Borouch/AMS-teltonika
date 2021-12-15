@@ -25,5 +25,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AcademiesPositions extends Model
 {
+
     use HasFactory;
 }

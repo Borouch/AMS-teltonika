@@ -57,6 +57,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|Candidate whereEducationInstitutionId($value)
  * @property string $can_manage_data
  * @method static \Illuminate\Database\Eloquent\Builder|Candidate whereCanManageData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Candidate search($search)
  */
 class Candidate extends Model
 {

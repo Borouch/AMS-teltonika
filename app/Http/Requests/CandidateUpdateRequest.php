@@ -38,7 +38,6 @@ class CandidateUpdateRequest extends FormRequest
             ],
             ValidationUtilities::customMessages()
         )->validate()['candidate_id'];
-//        $positions = Position::all();
         $institutions = EducationInstitution::all();
         $institutions = $institutions->map(fn ($institution): string => $institution->id);
 
@@ -64,9 +63,10 @@ class CandidateUpdateRequest extends FormRequest
             'CV' => 'nullable|max:10000|mimes:pdf'
         ];
     }
+
+
     /**
-     * @param null $keys
-     *
+     * @param $keys
      * @return array
      */
     public function all($keys = null)

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Http\Request;
 use Throwable;
 use ErrorException;
 use Spatie\Permission\Models\Role;
@@ -15,6 +16,9 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Filesystem\Exception\InvalidArgumentException;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class Handler extends ExceptionHandler
 {
@@ -24,25 +28,26 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [];
+
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param Request $request
+     * @param Throwable $e
+     * @return HttpResponse
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function render($request, Throwable $e)
     {
-        if($e instanceof UnauthorizedException) 
-        {
-             $roles = Role::all()->map(fn($r)=>$r->name)->toArray();
-             $e->forRoles($roles);
-             return Response::json(['error' => $e->getMessage()], 401);
+        if ($e instanceof UnauthorizedException) {
+            $roles = Role::all()->map(fn($r) => $r->name)->toArray();
+            $e->forRoles($roles);
+            return Response::json(['error' => $e->getMessage()], 401);
         }
-        return Parent::render($request,$e);
+        return Parent::render($request, $e);
     }
+
     /**
      * Register the exception handling callbacks for the application.
      *
@@ -51,7 +56,16 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
+            $this->renderable(function (TokenInvalidException $e, $request) {
+                return Response::json(['error' => 'Invalid token'], 401);
+            });
+            $this->renderable(function (TokenExpiredException $e, $request) {
+                return Response::json(['error' => 'Token has Expired'], 401);
+            });
 
+            $this->renderable(function (JWTException $e, $request) {
+                return Response::json(['error' => 'Token not parsed'], 401);
+            });
             $this->renderable(function (ValidationException $e, $request) {
                 return Response::json(['error' => $e->getMessage(), 'details' => $e->errors()], 422);
             });

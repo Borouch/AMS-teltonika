@@ -30,41 +30,42 @@ class AssignRoleRequest extends FormRequest
      */
     public function rules()
     {
-        $rolesIds = Role::all()->map(fn ($r) => $r->id);
-        $usersIds = User::all()->map(fn ($u) => $u->id);
+        $rolesIds = Role::all()->map(fn($r) => $r->id);
+        $usersIds = User::all()->map(fn($u) => $u->id);
         $data = SupportValidator::make(
             $this->only('user_id'),
             [
                 'user_id' => 'required|' . Rule::in($usersIds),
             ],
 
-            UserService::validationMessages()
+            ValidationUtilities::customMessages()
 
         )->validate();
         $user = User::find($data['user_id']);
-        $userRolesIds = $user->roles()->get()->map(fn ($r) => $r->id);
+        $userRolesIds = $user->roles()->get()->map(fn($r) => $r->id);
         return [
-            'roles.*' => 'required|distinct|'  . Rule::notIn($userRolesIds) . '|' . Rule::in($rolesIds),
+            'roles.*' => 'required|distinct|' . Rule::notIn($userRolesIds) . '|' . Rule::in($rolesIds),
         ];
     }
 
     /**
      * @param null $keys
-     * 
+     *
      * @return array
      */
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['user_id'] = $this->route('user_id');
+        $data['user_id'] = $this->route('id');
 
         return $data;
     }
 
     public function messages()
     {
-        return UserService::validationMessages();
+        return ValidationUtilities::customMessages();
     }
+
     protected function failedValidation(Validator $validator)
     {
         ValidationUtilities::failedValidation($validator);

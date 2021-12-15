@@ -18,7 +18,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/reset_password', [NewPasswordController::class, 'reset']);
 Route::get('/reset_link', [NewPasswordController::class, 'resetLink']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth.jwt'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/users', [UserController::class, 'index']);
