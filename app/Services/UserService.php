@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,55 +47,8 @@ class UserService
      */
     public static function showUsers(int $id)
     {
-        $user = User::find($id);
-        return response()->json(['user' => $user]);
+        return response()->json(['User' => User::find($id)]);
     }
 
 
-    /**
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
-     * @throws Exception
-     */
-    public static function assignUserRoles(Request $request, int $id)
-    {
-        $user = User::find($id);
-        if ($request->isNotFilled('roles')) {
-            throw new Exception('All valid input fields are empty', 406);
-        }
-        $roles = $request->roles;
-        foreach ($roles as $roleId) {
-            $role = Role::find($roleId);
-            $user->assignRole($role->name);
-        }
-        return response()->json([
-            'message' => "Role(s) has been successfully assigned to user",
-            'user' => $user,
-        ]);
-    }
-
-
-    /**
-     * @param Request $request
-     * @param int $userId
-     * @return JsonResponse
-     * @throws Exception
-     */
-    public static function removeUserRoles(Request $request, int $userId)
-    {
-        $user = User::find($userId);
-        if ($request->isNotFilled('roles')) {
-            throw new Exception('All valid input fields are empty', 406);
-        }
-        $roles = $request->roles;
-        foreach ($roles as $roleId) {
-            $role = Role::find($roleId);
-            $user->removeRole($role->name);
-        }
-        return response()->json([
-            'message' => "Role(s) has been successfully removed from user",
-            'user' => $user,
-        ]);
-    }
 }

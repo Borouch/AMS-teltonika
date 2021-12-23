@@ -45,6 +45,11 @@ class Handler extends ExceptionHandler
             $e->forRoles($roles);
             return Response::json(['error' => $e->getMessage()], 401);
         }
+        if($e instanceof \TypeError)
+        {
+            $e = new \TypeError();
+            return Response::json(['error' => $e->getMessage()], 500);
+        }
         return Parent::render($request, $e);
     }
 

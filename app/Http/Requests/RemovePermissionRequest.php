@@ -3,15 +3,15 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
-use App\Services\UserService;
-use Illuminate\Validation\Rule;
 use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator as SupportValidator;
+use Illuminate\Validation\Rule;
 
-class RemoveRoleRequest extends FormRequest
+class RemovePermissionRequest extends FormRequest
 {
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -41,9 +41,9 @@ class RemoveRoleRequest extends FormRequest
 
         )->validate();
         $user = User::find($data['user_id']);
-        $userRolesIds = $user->roles()->get()->map(fn ($r) => $r->id);
+        $userPermissionsIds = $user->permissions()->get()->map(fn ($p) => $p->id);
         return [
-            'roles.*' => 'required|distinct|' . Rule::in($userRolesIds),
+            'permissions.*' => 'required|distinct|' . Rule::in($userPermissionsIds),
         ];
     }
 
@@ -62,7 +62,7 @@ class RemoveRoleRequest extends FormRequest
     public function messages()
     {
         return [
-            'roles.*.in' => "User does not have role with such id"
+            'permissions.*.in' => "User does not have permission with such id"
         ];
     }
 

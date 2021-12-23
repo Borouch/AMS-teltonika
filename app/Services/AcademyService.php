@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Utilities\ValidationUtilities;
 use App\Models\Academy;
+use Exception;
 use Illuminate\Http\Request;
-use  \Illuminate\Http\JsonResponse;
+use  Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class AcademyService
 {
@@ -19,16 +21,23 @@ class AcademyService
     }
 
     /**
-     * @param int $id
+     * @param  $id
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public static function showAcademy(int $id)
+    public static function showAcademy($id)
     {
         ValidationUtilities::validateAcademyId($id);
         $academy = Academy::find($id);
         return response()->json(['academy' => $academy], 200);
     }
 
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     * @throws Exception
+     */
     public static function updateAcademy(Request $request, int $id)
     {
         $hasValue = false;
@@ -69,6 +78,7 @@ class AcademyService
      * @param int $id
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
     public static function showAcademyPositions(int $id)
     {

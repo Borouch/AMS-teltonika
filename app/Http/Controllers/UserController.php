@@ -25,26 +25,5 @@ class UserController extends Controller
     }
 
 
-    /**
-     * @param AssignRoleRequest $request
-     * @param int $userId
-     *
-     * @return JsonResponse
-     */
-    public function assignRoles(AssignRoleRequest $request, $userId)
-    {
-        return UserService::assignUserRoles($request, $userId);
-    }
 
-
-    /**
-     * @param RemoveRoleRequest $request
-     * @param mixed $userId
-     *
-     * @return JsonResponse
-     */
-    public function removeRoles(RemoveRoleRequest $request, $userId)
-    {
-        return UserService::removeUserRoles($request, $userId);
-    }
 }

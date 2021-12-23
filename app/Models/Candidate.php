@@ -74,8 +74,8 @@ class Candidate extends Model
         'first stage 4',
         'second stage 1',
         'second stage 2',
-        'bachelor',
-        'masters',
+        'graduated bachelor',
+        'graduated masters',
         'not studying'
     ];
 
@@ -91,11 +91,11 @@ class Candidate extends Model
         'called for interview',
         'interviewed',
         'accepted for internship',
-        'recruited',
+        'employed',
         'not accepted for internship',
-        'not recruited',
+        'not employed',
         'declined',
-        'next'
+        'other'
     ];
 
     public function scopeSearch($query,$search)

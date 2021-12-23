@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Role;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Throwable;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RoleService
 {
@@ -39,37 +38,56 @@ class RoleService
      */
     public static function showRole(int $id)
     {
-
         return response()->json(['role' => Role::find($id)], 200);
-
     }
 
     /**
      * @param Request $request
-     *
+     * @param int $userId
      * @return JsonResponse
+     * @throws Exception
      */
-    public static function storeRole(Request $request)
+    public static function assignRoles(Request $request, int $userId)
     {
-        $role = Role::create($request->only(['name', 'guard_name']));
-        return response()->json(['message' => "Role created successfully", 'role' => $role], 200);
+        $user = User::find($userId);
+        if ($request->isNotFilled('roles')) {
+            throw new Exception('All valid input fields are empty', 406);
+        }
+        $roles = $request->roles;
+        foreach ($roles as $roleId) {
+            $role = Role::find($roleId);
+            $user->assignRole($role->name);
+        }
+        $user = User::find($userId);
+        return response()->json([
+            'message' => "Role(s) has been successfully assigned to user",
+            'user' => $user,
+        ]);
     }
 
 
     /**
      * @param Request $request
-     * @param int $id
+     * @param int $userId
      * @return JsonResponse
+     * @throws Exception
      */
-    public static function updateRole(Request $request, int $id)
+    public static function removeRoles(Request $request, int $userId)
     {
-        $role = Role::find($id);
-        if ($request->filled('name')) {
-            $role->update($request->only(['name']));
+        $user = User::find($userId);
+
+        if ($request->isNotFilled('roles')) {
+            throw new Exception('All valid input fields are empty', 406);
         }
-        if ($request->filled('guard_name')) {
-            $role->update($request->only(['guard_name']));
+        $roles = $request->roles;
+        foreach ($roles as $roleId) {
+            $role = Role::find($roleId);
+            $user->removeRole($role->name);
         }
-        return response()->json(['message' => "Role updated successfully", 'role' => $role], 200);
+        $user = User::find($userId);
+        return response()->json([
+            'message' => "Role(s) has been successfully removed from user",
+            'user' => $user,
+        ]);
     }
 }

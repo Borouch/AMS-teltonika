@@ -12,31 +12,39 @@ use Illuminate\Validation\ValidationException;
 
 class AcademyStatisticService
 {
-    private const PROPERTY_NAMES =
+    //  Access name is the name with which a property is accessed through candidate model.
+    //  For a non-relational property response name is the same as access name.
+    private const PROP_ACCESS_NAMES =
         ['positions', 'educationInstitution', 'gender', 'course', 'status', 'application_date'];
+
+    // Only for relational properties' response name is defined explicitly.
+    private const PROP_RESPONSE_NAMES = ['position', 'education_institution'];
 
 
     /**
+     * @param array|null $filterData
      * @return array
      */
-    public static function getIndexStatByPosition()
+    public static function getIndexStatByPosition(array $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[0];
-        $propResponseName = 'position';
-        return self::indexStatByProperty($prop, $propResponseName);
+        $prop = self::PROP_ACCESS_NAMES[0];
+        $propResponseName = self::PROP_RESPONSE_NAMES[0];
+        return self::indexStatByProperty($prop, $propResponseName, candidateFilterData: $filterData);
     }
 
 
     /**
      * @param int $academyId
-     * @return array
+     * @param array|null $filterData
+     * @return array[]
+     * @throws ValidationException
      */
-    public static function getShowStatByPosition(int $academyId)
+    public static function getShowStatByPosition($academyId, array $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[0];
-        $propResponseName = 'position';
+        $prop = self::PROP_ACCESS_NAMES[0];
+        $propResponseName = self::PROP_RESPONSE_NAMES[0];
 
-        return self::showStatByProperty($academyId, $prop, $propResponseName);
+        return self::showStatByProperty($academyId, $prop, $propResponseName, candidateFilterData: $filterData);
     }
 
 
@@ -46,22 +54,23 @@ class AcademyStatisticService
      */
     public static function getIndexStatByEducationInstitution(array $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[1];
-        $propResponseName = 'education_institution';
+        $prop = self::PROP_ACCESS_NAMES[1];
+        $propResponseName = self::PROP_RESPONSE_NAMES[1];
 
         return self::indexStatByProperty($prop, $propResponseName, candidateFilterData: $filterData);
     }
 
 
     /**
-     * @param int $academyId
-     * @param array $filterData
-     * @return array
+     * @param  $academyId
+     * @param array|null $filterData
+     * @return array[]
+     * @throws ValidationException
      */
-    public static function getShowStatByEducationInstitution(int $academyId, $filterData = null)
+    public static function getShowStatByEducationInstitution($academyId, array $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[1];
-        $propResponseName = 'education_institution';
+        $prop = self::PROP_ACCESS_NAMES[1];
+        $propResponseName = self::PROP_RESPONSE_NAMES[1];
 
         return self::showStatByProperty($academyId, $prop, $propResponseName, candidateFilterData: $filterData);
     }
@@ -73,22 +82,25 @@ class AcademyStatisticService
      */
     public static function getIndexStatByGender(array $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[2];
+        $prop = self::PROP_ACCESS_NAMES[2];
 
         return self::indexStatByProperty($prop, isPropertyRelation: false, candidateFilterData: $filterData);
     }
 
 
     /**
-     * @param int $academyId
-     * @return array|array[]
+     * @param  $academyId
+     * @param $filterData
+     * @return array[]
+     * @throws ValidationException
      */
-    public static function getShowStatByGender(int $academyId, $filterData = null)
+    public static function getShowStatByGender($academyId, $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[2];
+        $prop = self::PROP_ACCESS_NAMES[2];
 
         return self::showStatByProperty($academyId, $prop, isPropertyRelation: false, candidateFilterData: $filterData);
     }
+
 
     /**
      * @param array|null $filterData
@@ -96,19 +108,47 @@ class AcademyStatisticService
      */
     public static function getIndexStatByCourse(array $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[3];
+        $prop = self::PROP_ACCESS_NAMES[3];
 
         return self::indexStatByProperty($prop, isPropertyRelation: false, candidateFilterData: $filterData);
     }
 
+
     /**
-     * @param int $academyId
+     * @param  $academyId
      * @param array|null $filterData
      * @return array[]
+     * @throws ValidationException
      */
-    public static function getShowStatByCourse(int $academyId, array $filterData = null)
+    public static function getShowStatByCourse($academyId, array $filterData = null)
     {
-        $prop = self::PROPERTY_NAMES[3];
+        $prop = self::PROP_ACCESS_NAMES[3];
+
+        return self::showStatByProperty($academyId, $prop, isPropertyRelation: false, candidateFilterData: $filterData);
+    }
+
+
+    /**
+     * @param array|null $filterData
+     * @return array
+     */
+    public static function getIndexStatByStatus(array $filterData = null)
+    {
+        $prop = self::PROP_ACCESS_NAMES[4];
+
+        return self::indexStatByProperty($prop, isPropertyRelation: false, candidateFilterData: $filterData);
+    }
+
+
+    /**
+     * @param  $academyId
+     * @param array|null $filterData
+     * @return array[]
+     * @throws ValidationException
+     */
+    public static function getShowStatByStatus($academyId, array $filterData = null)
+    {
+        $prop = self::PROP_ACCESS_NAMES[4];
 
         return self::showStatByProperty($academyId, $prop, isPropertyRelation: false, candidateFilterData: $filterData);
     }
@@ -116,77 +156,51 @@ class AcademyStatisticService
     /**
      * @return array
      */
-    public static function getIndexStatByStatus()
-    {
-        $prop = self::PROPERTY_NAMES[4];
-
-        return self::indexStatByProperty($prop, isPropertyRelation: false);
-    }
-
-    /**
-     * @param int $academyId
-     * @return array|array[]
-     */
-    public static function getShowStatByStatus(int $academyId)
-    {
-        $prop = self::PROPERTY_NAMES[4];
-
-        return self::showStatByProperty($academyId, $prop, isPropertyRelation: false);
-    }
-
-    /**
-     * @return array
-     */
     public static function getIndexStatByApplicationDate()
     {
-        $prop = self::PROPERTY_NAMES[5];
+        $prop = self::PROP_ACCESS_NAMES[5];
 
         return self::indexStatByProperty($prop, isPropertyRelation: false);
     }
 
+
     /**
-     * @param int $academyId
-     * @return array|array[]
+     * @param  $academyId
+     * @return array[]
+     * @throws ValidationException
      */
-    public static function getShowStatByApplicationDate(int $academyId)
+    public static function getShowStatByApplicationDate($academyId)
     {
-        $prop = self::PROPERTY_NAMES[5];
+        $prop = self::PROP_ACCESS_NAMES[5];
 
         return self::showStatByProperty($academyId, $prop, isPropertyRelation: false);
     }
 
+
     /**
-     * @param int $academyId
+     * @param  $academyId
      * @param int $monthNumber
-     *
      * @return array
+     * @throws ValidationException
      */
-    public static function getShowStatByMonth(int $academyId, int $monthNumber)
+    public static function getShowStatByMonth($academyId, int $monthNumber)
     {
         $filterData = ['name' => 'month', 'month_number' => $monthNumber];
-        $courseProp = self::PROPERTY_NAMES[3];
-        $genderProp = self::PROPERTY_NAMES[2];
-        $monthCountStat = self::getShowStatByMonthCount($academyId, $filterData);
-        $statByCourse = self::getShowStatByCourse($academyId, $filterData);
-        $statByEdu = self::getShowStatByEducationInstitution($academyId, $filterData);
-        $statByGender = self::getShowStatByGender($academyId, $filterData);
-        $aggregateStat = self::initAggregateStat($monthCountStat, 'count');
-        $aggregateStat = self::aggregateStat(
-            $aggregateStat,
-            $statByCourse,
-            $courseProp
-        );
-        $aggregateStat = self::aggregateStat(
-            $aggregateStat,
-            $statByGender,
-            $genderProp
-        );
-        $aggregateStat = self::aggregateStat(
-            $aggregateStat,
-            $statByEdu,
-            'education_institution'
-        );
+        $courseProp = self::PROP_ACCESS_NAMES[3];
+        $genderProp = self::PROP_ACCESS_NAMES[2];
+        $statusProp = self::PROP_ACCESS_NAMES[4];
+        $positionProp = self::PROP_RESPONSE_NAMES[0];
+        $eduProp = self::PROP_RESPONSE_NAMES[1];
+        $monthCountProp = 'count';
+        $statistics = [];
+        $statistics[$monthCountProp] = self::getShowStatByMonthCount($academyId, $filterData);
+        $statistics[$courseProp] = self::getShowStatByCourse($academyId, $filterData);
+        $statistics[$eduProp] = self::getShowStatByEducationInstitution($academyId, $filterData);
+        $statistics[$positionProp] = self::getShowStatByPosition($academyId, $filterData);
+        $statistics[$statusProp] = self::getShowStatByStatus($academyId, $filterData);
+        $statistics[$genderProp] = self::getShowStatByGender($academyId, $filterData);
 
+        $aggregateStat = self::getAggregatedStatistics($statistics);
         return $aggregateStat;
     }
 
@@ -197,40 +211,55 @@ class AcademyStatisticService
     public static function getIndexStatByMonth(int $monthNumber)
     {
         $filterData = ['name' => 'month', 'month_number' => $monthNumber];
-        $courseProp = self::PROPERTY_NAMES[3];
-        $genderProp = self::PROPERTY_NAMES[2];
-        $monthCountStat = self::getIndexStatByMonthCount($filterData);
-        $statByCourse = self::getIndexStatByCourse($filterData);
-        $statByEdu = self::getIndexStatByEducationInstitution($filterData);
-        $statByGender = self::getIndexStatByGender($filterData);
-        $aggregateStat = self::initAggregateStat($monthCountStat, 'count');
-        $aggregateStat = self::aggregateStat(
-            $aggregateStat,
-            $statByCourse,
-            $courseProp
-        );
-        $aggregateStat = self::aggregateStat(
-            $aggregateStat,
-            $statByGender,
-            $genderProp
-        );
-        $aggregateStat = self::aggregateStat(
-            $aggregateStat,
-            $statByEdu,
-            'education_institution'
-        );
+        $courseProp = self::PROP_ACCESS_NAMES[3];
+        $genderProp = self::PROP_ACCESS_NAMES[2];
+        $statusProp = self::PROP_ACCESS_NAMES[4];
+        $positionProp = self::PROP_RESPONSE_NAMES[0];
+        $eduProp = self::PROP_RESPONSE_NAMES[1];
+        $monthCountProp = 'count';
+        $statistics = [];
 
+        $statistics[$monthCountProp] = self::getIndexStatByMonthCount($filterData);
+        $statistics[$courseProp] = self::getIndexStatByCourse($filterData);
+        $statistics[$eduProp] = self::getIndexStatByEducationInstitution($filterData);
+        $statistics[$positionProp] = self::getIndexStatByPosition($filterData);
+        $statistics[$statusProp] = self::getIndexStatByStatus($filterData);
+        $statistics[$genderProp] = self::getIndexStatByGender($filterData);
+
+        $aggregateStat = self::getAggregatedStatistics($statistics);
         return $aggregateStat;
     }
 
     /**
-     * @param int $academyId
+     * @param array $statistics
+     * @return array
+     */
+    public static function getAggregatedStatistics(array $statistics)
+    {
+        $statPropNames = array_keys($statistics);
+        $aggregateStat = [];
+        for ($i = 0; $i < count($statPropNames); $i++) {
+            $statPropName = $statPropNames[$i];
+            if ($i == 0) {
+                $aggregateStat = self::initAggregateStat($statistics[$statPropName], $statPropName);
+            }
+            $aggregateStat = self::aggregateStat(
+                $aggregateStat,
+                $statistics[$statPropName],
+                $statPropName
+            );
+        }
+        return $aggregateStat;
+    }
+
+    /**
+     * @param  $academyId
      * @param array $filterData
      *
      * @return array
      * @throws ValidationException
      */
-    public static function getShowStatByMonthCount(int $academyId, array $filterData)
+    public static function getShowStatByMonthCount($academyId, array $filterData)
     {
         ValidationUtilities::validateAcademyId($academyId);
         $academy = Academy::find($academyId);
@@ -263,10 +292,13 @@ class AcademyStatisticService
         $candidates = $academy->candidates()->get();
         $candidatesCount = self::getFilteredCandidates($candidates, $filterData)->count();
         $filteredCountstat =
-            ['academy' => $academy, 'statistic' => [
-                'month' => $filterData['month_number'],
-                'candidates_count' => $candidatesCount,
-            ]];
+            [
+                'academy' => $academy,
+                'statistic' => [
+                    'month' => $filterData['month_number'],
+                    'candidates_count' => $candidatesCount,
+                ]
+            ];
 
         return $filteredCountstat;
     }
@@ -318,20 +350,20 @@ class AcademyStatisticService
     public static function getInitialPropElementCount(Academy $academy, string $prop)
     {
         // Positions count
-        if ($prop == self::PROPERTY_NAMES[0]) {
+        if ($prop == self::PROP_ACCESS_NAMES[0]) {
             $acPos = $academy->positions()->get();
             $positionsCount = $acPos->mapWithKeys(fn($pos) => [$pos->name => 0]);
 
             return $positionsCount;
         }
         //Education institutions count
-        if ($prop == self::PROPERTY_NAMES[1]) {
+        if ($prop == self::PROP_ACCESS_NAMES[1]) {
             $eduCount = EducationInstitution::all()->mapWithKeys(fn($eduProp) => [$eduProp->name => 0]);
 
             return $eduCount;
         }
         //Gender count
-        if ($prop == self::PROPERTY_NAMES[2]) {
+        if ($prop == self::PROP_ACCESS_NAMES[2]) {
             $genderCount = [];
             foreach (Candidate::GENDERS as $genderProp) {
                 $genderCount += [$genderProp => 0];
@@ -340,7 +372,7 @@ class AcademyStatisticService
             return $genderCount;
         }
         //Course count
-        if ($prop == self::PROPERTY_NAMES[3]) {
+        if ($prop == self::PROP_ACCESS_NAMES[3]) {
             $courseCount = [];
             foreach (Candidate::COURSES as $courseProp) {
                 $courseCount += [$courseProp => 0];
@@ -349,7 +381,7 @@ class AcademyStatisticService
             return $courseCount;
         }
         //Statuses count
-        if ($prop == self::PROPERTY_NAMES[4]) {
+        if ($prop == self::PROP_ACCESS_NAMES[4]) {
             $statusCount = [];
             foreach (Candidate::STATUSES as $status) {
                 $statusCount += [$status => 0];
@@ -358,7 +390,7 @@ class AcademyStatisticService
             return $statusCount;
         }
         //Application dates count
-        if ($prop == self::PROPERTY_NAMES[5]) {
+        if ($prop == self::PROP_ACCESS_NAMES[5]) {
             $appDatesCount = [];
             $candidates = $academy->candidates()->get();
             foreach ($candidates as $candidate) {
@@ -407,10 +439,9 @@ class AcademyStatisticService
     public static function indexStatByProperty(
         string $prop,
         string|null $propResponseName = null,
-        bool   $isPropertyRelation = true,
-        array|null  $candidateFilterData = null
-    )
-    {
+        bool $isPropertyRelation = true,
+        array|null $candidateFilterData = null
+    ) {
         $academies = Academy::all();
         $academiesStat = [];
         foreach ($academies as $academy) {
@@ -429,7 +460,7 @@ class AcademyStatisticService
 
     /**
      *
-     * @param int $academyId
+     * @param  $academyId
      * @param string $prop
      * @param string|null $propResponseName
      * @param bool $isPropertyRelation
@@ -439,13 +470,12 @@ class AcademyStatisticService
      * @throws ValidationException
      */
     public static function showStatByProperty(
-        int    $academyId,
+        $academyId,
         string $prop,
         string|null $propResponseName = null,
-        bool   $isPropertyRelation = true,
-        array|null  $candidateFilterData = null
-    ): array
-    {
+        bool $isPropertyRelation = true,
+        array|null $candidateFilterData = null
+    ): array {
         ValidationUtilities::validateAcademyId($academyId);
         $academy = Academy::find($academyId);
         $academyStat = self::getAcademyStatByProp(
@@ -487,12 +517,11 @@ class AcademyStatisticService
      */
     public static function getAcademyStatByProp(
         Academy $academy,
-        string  $prop,
-        string|null  $propResponseName,
-        bool    $isPropertyRelation,
+        string $prop,
+        string|null $propResponseName,
+        bool $isPropertyRelation,
         array|null $candidateFilterData
-    )
-    {
+    ) {
         $initialPropElementsCount = self::getInitialPropElementCount($academy, $prop);
         $candidates = $academy->candidates()->get();
         // Only candidates' property elements will be counted that pass filter
@@ -503,7 +532,12 @@ class AcademyStatisticService
         if ($candidates->count() == 0) {
             $candidatePropElementsCount = $initialPropElementsCount;
         } else {
-            $candidatePropElementsCount = self::getCandidatePropElementsCount($candidates, $initialPropElementsCount, $isPropertyRelation, $prop);
+            $candidatePropElementsCount = self::getCandidatePropElementsCount(
+                $candidates,
+                $initialPropElementsCount,
+                $isPropertyRelation,
+                $prop
+            );
         }
 
         $propStat = [];
@@ -527,16 +561,19 @@ class AcademyStatisticService
      */
     private static function getCandidatePropElementsCount(
         EloquentCollection $candidates,
-        Collection|array   $initialPropElementsCount,
-        bool               $isPropertyRelation,
-        string             $prop)
-    {
+        Collection|array $initialPropElementsCount,
+        bool $isPropertyRelation,
+        string $prop
+    ) {
         $candidatePropElementsCount = $initialPropElementsCount;
         foreach ($candidates as $candidate) {
             if ($isPropertyRelation) {
                 $propElements = $candidate->$prop()->get();
                 // Since it's a relation it might have multiple elements that need to be counted
-                $candidatePropElementsCount = self::getCandidateRelationElementsCount($initialPropElementsCount, $propElements);
+                $candidatePropElementsCount = self::getCandidateRelationElementsCount(
+                    $initialPropElementsCount,
+                    $propElements
+                );
             } else {
                 $propElement = $candidate->$prop;
                 if (isset($candidatePropElementsCount[$propElement])) {

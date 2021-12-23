@@ -56,7 +56,7 @@ class AssignRoleRequest extends FormRequest
     public function all($keys = null)
     {
         $data = parent::all();
-        $data['user_id'] = $this->route('id');
+        $data['user_id'] = $this->route('user_id');
 
         return $data;
     }

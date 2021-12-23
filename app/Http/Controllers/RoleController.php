@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignRoleRequest;
+use App\Http\Requests\RemoveRoleRequest;
 use App\Http\Requests\RoleShowRequest;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Services\RoleService;
@@ -20,7 +23,7 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        return  RoleService::indexRoles();
+        return RoleService::indexRoles();
     }
 
     /**
@@ -28,28 +31,33 @@ class RoleController extends Controller
      * @param int $roleId
      * @return JsonResponse
      */
-    public function show (RoleShowRequest $request, int $roleId)
+    public function show(RoleShowRequest $request, int $roleId)
     {
-        return  RoleService::showRole($roleId);
+        return RoleService::showRole($roleId);
     }
 
     /**
-     * @param RoleStoreRequest $request
+     * @param AssignRoleRequest $request
+     * @param int $userId
+     *
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function store(RoleStoreRequest $request)
+    public function assign(AssignRoleRequest $request, int $userId)
     {
-        return RoleService::storeRole($request);
+        return RoleService::assignRoles($request, $userId);
     }
+
 
     /**
-     * @param RoleUpdateRequest $request
-     * @param int $roleId
+     * @param RemoveRoleRequest $request
+     * @param int $userId
+     *
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function update(RoleUpdateRequest $request, int $roleId)
+    public function remove(RemoveRoleRequest $request, int $userId)
     {
-        return RoleService::updateRole($request,$roleId);
+        return RoleService::removeRoles($request, $userId);
     }
-
 }

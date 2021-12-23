@@ -3,14 +3,15 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
-use App\Services\UserService;
-use Illuminate\Validation\Rule;
 use App\Utilities\ValidationUtilities;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator as SupportValidator;
+use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
-class RemoveRoleRequest extends FormRequest
+class AssignPermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +23,6 @@ class RemoveRoleRequest extends FormRequest
         return true;
     }
 
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,7 +30,8 @@ class RemoveRoleRequest extends FormRequest
      */
     public function rules()
     {
-        $usersIds = User::all()->map(fn ($u) => $u->id);
+        $permissionsIds = Permission::all()->map(fn($p) => $p->id);
+        $usersIds = User::all()->map(fn($u) => $u->id);
         $data = SupportValidator::make(
             $this->only('user_id'),
             [
@@ -40,10 +41,11 @@ class RemoveRoleRequest extends FormRequest
             ValidationUtilities::customMessages()
 
         )->validate();
+
         $user = User::find($data['user_id']);
-        $userRolesIds = $user->roles()->get()->map(fn ($r) => $r->id);
+        $userPermissionsIds = $user->permissions()->get()->map(fn($r) => $r->id);
         return [
-            'roles.*' => 'required|distinct|' . Rule::in($userRolesIds),
+            'permissions.*' => 'required|distinct|' . Rule::notIn($userPermissionsIds) . '|' . Rule::in($permissionsIds),
         ];
     }
 
@@ -56,14 +58,13 @@ class RemoveRoleRequest extends FormRequest
     {
         $data = parent::all();
         $data['user_id'] = $this->route('user_id');
+
         return $data;
     }
 
     public function messages()
     {
-        return [
-            'roles.*.in' => "User does not have role with such id"
-        ];
+        return ValidationUtilities::customMessages();
     }
 
     protected function failedValidation(Validator $validator)

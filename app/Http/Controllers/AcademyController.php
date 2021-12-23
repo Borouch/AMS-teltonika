@@ -9,6 +9,8 @@ use App\Services\AcademyService;
 use App\Http\Requests\AcademyStoreRequest;
 use App\Http\Requests\statByMonthRequest;
 use App\Services\AcademyStatisticService;
+use Illuminate\Validation\ValidationException;
+use Psy\Exception\TypeErrorException;
 
 class AcademyController extends Controller
 {
@@ -24,10 +26,11 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param  $academyId
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function show(Request $request, int $academyId)
+    public function show(Request $request, $academyId)
     {
         return AcademyService::showAcademy($academyId);
     }
@@ -36,6 +39,7 @@ class AcademyController extends Controller
      * @param AcademyUpdateRequest $request
      * @param int $academyId
      * @return JsonResponse
+     * @throws \Exception
      */
     public function update(AcademyUpdateRequest $request, int $academyId)
     {
@@ -54,11 +58,12 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param  $academyId
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showAcademyPositions(Request $request, int $academyId)
+    public function showAcademyPositions(Request $request, $academyId)
     {
         return AcademyService::showAcademyPositions($academyId);
     }
@@ -76,11 +81,12 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param  $academyId
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showStatByPosition(Request $request, int $academyId)
+    public function showStatByPosition(Request $request, $academyId)
     {
         $stat = AcademyStatisticService::getShowStatByPosition($academyId);
         return response()->json($stat);
@@ -99,11 +105,12 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param $academyId
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showStatByEducationInstitution(Request $request, int $academyId)
+    public function showStatByEducationInstitution(Request $request, $academyId)
     {
         $stat = AcademyStatisticService::getShowStatByEducationInstitution($academyId);
         return response()->json($stat);
@@ -121,11 +128,12 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param $academyId
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showStatByCourse(Request $request, int $academyId)
+    public function showStatByCourse(Request $request, $academyId)
     {
         $stat = AcademyStatisticService::getShowStatByCourse($academyId);
         return response()->json($stat);
@@ -143,11 +151,12 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param $academyId
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showStatByGender(Request $request, int $academyId)
+    public function showStatByGender(Request $request, $academyId)
     {
         $stat = AcademyStatisticService::getShowStatByGender($academyId);
         return response()->json($stat);
@@ -165,11 +174,12 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param $academyId
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showStatByStatus(Request $request, int $academyId)
+    public function showStatByStatus(Request $request, $academyId)
     {
         $stat = AcademyStatisticService::getShowStatByStatus($academyId);
         return response()->json($stat);
@@ -187,11 +197,12 @@ class AcademyController extends Controller
 
     /**
      * @param Request $request
-     * @param int $academyId
+     * @param $academyId
      *
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showStatByApplicationDate(Request $request, int $academyId)
+    public function showStatByApplicationDate(Request $request, $academyId)
     {
         $stat = AcademyStatisticService::getShowStatByApplicationDate($academyId);
         return response()->json($stat);
@@ -200,10 +211,10 @@ class AcademyController extends Controller
 
     /**
      * @param statByMonthRequest $request
-     * @param int $monthNumber
+     * @param  $monthNumber
      * @return JsonResponse
      */
-    public function indexStatByMonth(StatByMonthRequest $request, int $monthNumber)
+    public function indexStatByMonth(StatByMonthRequest $request, $monthNumber)
     {
         $stat = AcademyStatisticService::getIndexStatByMonth($monthNumber);
         return response()->json($stat);
@@ -212,11 +223,12 @@ class AcademyController extends Controller
 
     /**
      * @param statByMonthRequest $request
-     * @param int $academyId
-     * @param int $monthNumber
+     * @param  $academyId
+     * @param  $monthNumber
      * @return JsonResponse
+     * @throws ValidationException
      */
-    public function showStatByMonth(StatByMonthRequest $request, int $academyId, int $monthNumber)
+    public function showStatByMonth(StatByMonthRequest $request, $academyId, $monthNumber)
     {
         $stat = AcademyStatisticService::getShowStatByMonth($academyId, $monthNumber);
         return response()->json($stat);

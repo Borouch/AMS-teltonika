@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Academy;
 use App\Models\Position;
 use App\Models\Candidate;
+use App\Services\PermissionService;
 use App\Services\RoleService;
 use App\Services\UserService;
 use Illuminate\Database\Seeder;
@@ -28,6 +29,7 @@ class DatabaseSeeder extends Seeder
         AcademiesPositionsService::storeInitialAcademiesPositions();
         EducationInstitutionService::storeInitialEdu();
         RoleService::storeInitialRoles();
+        PermissionService::storeInitialPermissions();
         Candidate::factory(10)->create();
         CandidatesPositions::factory(20)->create();
         UserService::storeInitialAdminUser();
