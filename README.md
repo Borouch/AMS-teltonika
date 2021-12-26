@@ -64,67 +64,67 @@ php artisan serve
 
 # Documentation
 ---
-- [[#Authenthication|Authenthication]]
-    - [[#Registration|Registration]]
-    - [[#Login|Login]]
-    - [[#Send password reset link|Send password reset link]]
-    - [[#Reset password|Reset password]]
-- [[#Roles|Roles]]
-    - [[#Index roles|Index roles]]
-    - [[#Show role|Show role]]
-    - [[#Assign roles|Assign roles]]
-    - [[#Remove roles|Remove roles]]
-- [[#Permission|Permission]]
-    - [[#Index permissions|Index permissions]]
-    - [[#Show permission|Show permission]]
-    - [[#Assign permissions|Assign permissions]]
-    - [[#Remove permissions|Remove permissions]]
-- [[#Users|Users]]
-    - [[#Index users|Index users]]
-    - [[#Show user|Show user]]
-- [[#Candidates|Candidates]]
-    - [[#Predefined properties|Predefined properties]]
-      - [[#Courses|Courses]]
-      - [[#Statuses|Statuses]]
-      - [[#Genders|Genders]]
-    - [[#Index candidates|Index candidates]]
-    - [[#Show candidate|Show candidate]]
-    - [[#Store candidate|Store candidate]]
-    - [[#Update candidate|Update candidate]]
-    - [[#Candidate import|Candidate import]]
-    - [[#Export CV|Export CV]]
-    - [[#Export candidates|Export candidates]]
-- [[#Education institution|Education institution]]
-    - [[#Index education institutions|Index education institutions]]
-    - [[#Show education institution|Show education institution]]
-    - [[#Store education institution|Store education institution]]
-    - [[#Update education institution|Update education institution]]
-- [[#Academy|Academy]]
-    - [[#Index academies|Index academies]]
-    - [[#Show academy|Show academy]]
-    - [[#Show academy positions|Show academy positions]]
-    - [[#Store academy|Store academy]]
-    - [[#Update academy|Update academy]]
-- [[#Positions|Positions]]
-    - [[#Index positions|Index positions]]
-    - [[#Show position|Show position]]
-    - [[#Store position|Store position]]
-    - [[#Update academy|Update academy]]
-- [[#Academy statistic|Academy statistic]]
-    - [[#Index statistic by position|Index statistic by position]]
-    - [[#Show statistic by position|Show statistic by position]]
-    - [[#Index statistic by education institution|Index statistic by education institution]]
-    - [[#Show statistic by education institution|Show statistic by education institution]]
-    - [[#Index statistic by gender|Index statistic by gender]]
-    - [[#Show statistic by gender|Show statistic by gender]]
-    - [[#Index statistic by course|Index statistic by course]]
-    - [[#Show statistic by course|Show statistic by course]]
-    - [[#Index statistic by status|Index statistic by status]]
-    - [[#Show statistic by status|Show statistic by status]]
-    - [[#Index statistic by application date|Index statistic by application date]]
-    - [[#Show statistic by application date|Show statistic by application date]]
-    - [[#Index statistic by month|Index statistic by month]]
-    - [[#Show statistic by month|Show statistic by month]]
+- [Authenthication](#Authenthication)
+    -  [Registration](#Registration)
+    -  [Login](#Login)
+    -  [Send password reset link](#Send password reset link)
+    -  [Reset password](#Reset password)
+-  [Roles](#Roles)
+    -  [Index roles](#Index roles]])
+    -  [Show roles](#Show roles]])
+    -  [Assign roles](#Assign roles)
+    -  [Remove roles](#Remove roles)
+-  [Permission](#Permission)
+    -  [Index permissions](#Index permissions)
+    -  [Show permission](#Show permission)
+    -  [Assign permissions](#Assign permissions)
+    -  [Remove permissions](#Remove permissions)
+-  [Users](#Users)
+    -  [Index users](#Index users)
+    -  [Show user](#Show user)
+-  [Candidates](#Candidates)
+    -  [Predefined properties](#Predefined properties)
+        -  [Courses](#Courses)
+        -  [Statuses](#Statuses)
+        -  [Genders](#Genders)
+    -  [Index candidates](#Index candidates)
+    -  [Show candidate](#Show candidate)
+    -  [Store candidate](#Store candidate)
+    -  [Update candidate](#Update candidate)
+    -  [Candidate import](#Candidate import)
+    -  [Export CV](#Export CV)
+    -  [Export candidates](#Export candidates)
+-  [Education institution](#Education institution)
+    -  [Index education institutions](#Index education institutions)
+    -  [Show education institution](#Show education institution)
+    -  [Store education institution](#Store education institution)
+    -  [Update education institution](#Update education institution)
+-  [Academy](#Academy)
+    -  [Index academies](#Index academies)
+    -  [Show academy](#Show academy)
+    - [[Show academy positions](#Show academy positions)
+    -  [Store academy](#Store academy)
+    -  [Update academy](#Update academy)
+-  [Positions](#Positions)
+    -  [Index positions](#Index positions)
+    -  [Show position](#Show position)
+    -  [Store position](#Store position)
+    -  [Update academy](#Update academy)
+-  [Academy statistic](#Academy statistic)
+    -  [Index statistic by position](#Index statistic by position)
+    - [Show statistic by position](#Show statistic by position)
+    -  [Index statistic by education institution](#Index statistic by education institution)
+    -  [Show statistic by education institution](#Show statistic by education institution)
+    -  [Index statistic by gender](#Index statistic by gender)
+    -  [Show statistic by gender](#Show statistic by gender)
+    -  [Index statistic by course](#Index statistic by course)
+    -  [Show statistic by course](#Show statistic by course)
+    -  [Index statistic by status](#Index statistic by status)
+    -  [Show statistic by status](#Show statistic by status)
+    -  [Index statistic by application date](#Index statistic by application date)
+    -  [Show statistic by application date](#Show statistic by application date)
+    - [Index statistic by month](#Index statistic by month)
+    - [Show statistic by month](#Show statistic by month)
 
 ## Authenthication
 ---
