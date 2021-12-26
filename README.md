@@ -150,7 +150,7 @@ type: form-data
 }
 ```
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Login
 **URL**: `POST` localhost/api/Login
 
@@ -169,7 +169,7 @@ type: form-data
 }
 ```
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Send password reset link
 Password reset link wil be sent to an email. Link will contain a token which will be used to reset password.
 
@@ -195,7 +195,7 @@ Password reset link wil be sent to an email. Link will contain a token which wil
 http://localhost/reset_password?token=4af52d04c68fb3586a77da00366adfe36870dab10b7ebc4f3847c3e8ce6b9cba
 ```
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Reset password
 
 **URL**: `POST` localhost/api/reset_password
@@ -216,7 +216,7 @@ type: form-data
 }
 ```
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ## Roles
 ---
 Role: `admin`
@@ -269,7 +269,7 @@ Role: `admin`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show role
 
 **URL**: `GET` localhost/api/roles/``{id}``
@@ -288,7 +288,7 @@ Role: `admin`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Assign roles
 
 **URL**: `PUT` localhost/api/roles/assign/``{user_id}``
@@ -324,7 +324,7 @@ type: x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Remove roles
 
 **URL**: `PUT` localhost/api/roles/remove/``{user_id}``
@@ -353,7 +353,7 @@ type: x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ## Permission
 ---
 Role: `admin`
@@ -406,7 +406,7 @@ Role: `admin`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show permission
 
 **URL**: `GET` localhost/api/permissions/``{id}``
@@ -455,7 +455,7 @@ Role: `admin`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Assign permissions
 
 **URL**: `PUT` localhost/api/permissions/assign/``{user_id}``
@@ -493,7 +493,7 @@ type: x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Remove permissions
 
 **URL**: `PUT` localhost/api/permissions/remove/``{user_id}``
@@ -524,7 +524,7 @@ type: x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ## Users
 Role: `admin`
 
@@ -567,7 +567,7 @@ Role: `admin`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show user
 
 **URL**: `GET` localhost/api/users/`{id}`
@@ -595,7 +595,7 @@ Role: `admin`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ## Candidates
 ---
 Permission: `candidate`
@@ -691,7 +691,7 @@ Retrieve a list of all candidates
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show candidate
 Role: `read`
 
@@ -741,7 +741,7 @@ Role: `read`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Store candidate
 Role: `create`
 **URL**: `POST` localhost/api/candidate
@@ -810,7 +810,7 @@ type: form-data
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Update candidate
 Role: `update`
 
@@ -881,7 +881,7 @@ type: form-data
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Candidate import
 Role: `create`
 
@@ -950,7 +950,7 @@ type: form-data
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Export CV
 Role: `read`
 
@@ -1000,7 +1000,7 @@ Retrieves a list of all education institutions
 }
 ```
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show education institution
 Retrieves education institutiton
 Role: `read`
@@ -1021,7 +1021,7 @@ Role: `read`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Store education institution
 Role: `create`
 **URL**: `POST` localhost/api/education_institution
@@ -1048,7 +1048,7 @@ type: form-data|x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Update education institution
 Role: `update`
 **URL**: `PUT` localhost/api/education_institution/{id}
@@ -1074,7 +1074,7 @@ type: x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ## Academy
 ---
 Permission: `academy`
@@ -1108,7 +1108,7 @@ Retrieve a list of all academies
 
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show academy
 Role: `read`
 Retrieves academy
@@ -1126,7 +1126,7 @@ Retrieves academy
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show academy positions
 Role: `read`
 Retrieves academy with positions
@@ -1177,7 +1177,7 @@ Retrieves academy with positions
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Store academy
 Role: `create`
 
@@ -1204,7 +1204,7 @@ type: form-data|x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Update academy
 Role: `update`
 **URL**: `PUT` localhost/api/academy/``{id}``
@@ -1230,7 +1230,7 @@ type: x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ## Positions
 ---
 Permissions; `position`
@@ -1277,7 +1277,7 @@ Role: `read`
 
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show position
 Role: `read`
 **URL**: `GET` localhost/api/positions/``{id}``
@@ -1296,7 +1296,7 @@ Role: `read`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Store position
 Role: `create`
 **URL**: `POST` localhost/api/academy
@@ -1331,7 +1331,7 @@ type: form-data|x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Update academy
 Role: `update`
 **URL**: `PUT` localhost/api/academy/{id}
@@ -1366,7 +1366,7 @@ type: x-www-form-urlencoded
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ## Academy statistic
 ---
 Role: `read`
@@ -1447,7 +1447,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show statistic by position
 
 **URL**: `GET` localhost/academies/``{id}``/statistic/position
@@ -1490,7 +1490,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Index statistic by education institution
 
 **URL**: `GET` localhost/api/academies/statistic/education_institution
@@ -1540,7 +1540,7 @@ Permission: `statistic`
 
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show statistic by education institution
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/education_institution
@@ -1571,7 +1571,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Index statistic by gender
 
 **URL**: `GET` localhost/api/academies/statistic/gender
@@ -1620,7 +1620,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show statistic by gender
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/gender
@@ -1651,7 +1651,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Index statistic by course
 
 **URL**: `GET` localhost/api/academies/statistic/course
@@ -1756,7 +1756,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show statistic by course
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/course
@@ -1815,7 +1815,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Index statistic by status
 
 **URL**: `GET` localhost/api/academies/statistic/status
@@ -1920,7 +1920,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show statistic by status
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/status
@@ -1979,7 +1979,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Index statistic by application date
 
 **URL**: `GET` localhost/api/academies/statistic/application_date
@@ -2049,7 +2049,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show statistic by application date
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/application_date
@@ -2096,7 +2096,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Index statistic by month
 
 **URL**: `GET` localhost/api/academies/statistic/month/`{month_number}`
@@ -2166,7 +2166,7 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
 ### Show statistic by month
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/month/`{month_number}`
@@ -2310,4 +2310,4 @@ Permission: `statistic`
 ```
 
 
-[[#Documentation|Back to top]]
+[Back to top](#Documentation)
