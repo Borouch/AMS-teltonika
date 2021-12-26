@@ -886,7 +886,7 @@ type: form-data
 ### Candidate import
 Role: `create`
 
-Imports candidate data from csv. Example file candidate_import_example.csv stored in project files.
+Imports candidate data from csv. Example file in example/candidate_import_example.csv
 
 **URL**: `POST` localhost/api/candidates/import
 
