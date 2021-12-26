@@ -1,4 +1,4 @@
-## Setup
+# Setup
 ---
 #### Download project
 ```bash
@@ -62,41 +62,76 @@ php artisan jwt:secret
 php artisan serve
 ```
 
-## Documentation
+# Documentation
 ---
-### Predefined properties
-###### Courses
-- first stage 1
-- first stage 2
-- first stage 3
-- first stage 4
-- second stage 1
-- second stage 2
-- graduated bachelor
-- graduated masters
-- not studying
+- [[#Authenthication|Authenthication]]
+    - [[#Registration|Registration]]
+    - [[#Login|Login]]
+    - [[#Send password reset link|Send password reset link]]
+    - [[#Reset password|Reset password]]
+- [[#Roles|Roles]]
+    - [[#Index roles|Index roles]]
+    - [[#Show role|Show role]]
+    - [[#Assign roles|Assign roles]]
+    - [[#Remove roles|Remove roles]]
+- [[#Permission|Permission]]
+    - [[#Index permissions|Index permissions]]
+    - [[#Show permission|Show permission]]
+    - [[#Assign permissions|Assign permissions]]
+    - [[#Remove permissions|Remove permissions]]
+- [[#Users|Users]]
+    - [[#Index users|Index users]]
+    - [[#Show user|Show user]]
+- [[#Candidates|Candidates]]
+    - [[#Predefined properties|Predefined properties]]
+      - [[#Courses|Courses]]
+      - [[#Statuses|Statuses]]
+      - [[#Genders|Genders]]
+    - [[#Index candidates|Index candidates]]
+    - [[#Show candidate|Show candidate]]
+    - [[#Store candidate|Store candidate]]
+    - [[#Update candidate|Update candidate]]
+    - [[#Candidate import|Candidate import]]
+    - [[#Export CV|Export CV]]
+    - [[#Export candidates|Export candidates]]
+- [[#Education institution|Education institution]]
+    - [[#Index education institutions|Index education institutions]]
+    - [[#Show education institution|Show education institution]]
+    - [[#Store education institution|Store education institution]]
+    - [[#Update education institution|Update education institution]]
+- [[#Academy|Academy]]
+    - [[#Index academies|Index academies]]
+    - [[#Show academy|Show academy]]
+    - [[#Show academy positions|Show academy positions]]
+    - [[#Store academy|Store academy]]
+    - [[#Update academy|Update academy]]
+- [[#Positions|Positions]]
+    - [[#Index positions|Index positions]]
+    - [[#Show position|Show position]]
+    - [[#Store position|Store position]]
+    - [[#Update academy|Update academy]]
+- [[#Academy statistic|Academy statistic]]
+    - [[#Index statistic by position|Index statistic by position]]
+    - [[#Show statistic by position|Show statistic by position]]
+    - [[#Index statistic by education institution|Index statistic by education institution]]
+    - [[#Show statistic by education institution|Show statistic by education institution]]
+    - [[#Index statistic by gender|Index statistic by gender]]
+    - [[#Show statistic by gender|Show statistic by gender]]
+    - [[#Index statistic by course|Index statistic by course]]
+    - [[#Show statistic by course|Show statistic by course]]
+    - [[#Index statistic by status|Index statistic by status]]
+    - [[#Show statistic by status|Show statistic by status]]
+    - [[#Index statistic by application date|Index statistic by application date]]
+    - [[#Show statistic by application date|Show statistic by application date]]
+    - [[#Index statistic by month|Index statistic by month]]
+    - [[#Show statistic by month|Show statistic by month]]
 
-###### Statuses
-- candidate
-- called for interview
-- interviewed
-- accepted for internship
-- employed
-- not accepted for internship
-- not employed
-- declined
-- other
-
-###### Genders
-- male
-- female
-
-### Authenthication
+## Authenthication
 ---
 Only admin can register new users. A registered user will receive an email with a generated password and an option to change it.
 Logged in user will receive a token through which he will be authenthicated
 
-#### Registration
+### Registration
 Role: `Admin`
 
 **URL**: `POST` localhost/api/register
@@ -115,8 +150,8 @@ type: form-data
 }
 ```
 
-#### Login
-
+[[#Documentation|Back to top]]
+### Login
 **URL**: `POST` localhost/api/Login
 
 **Body parameters**:
@@ -134,7 +169,8 @@ type: form-data
 }
 ```
 
-#### Send password reset link
+[[#Documentation|Back to top]]
+### Send password reset link
 Password reset link wil be sent to an email. Link will contain a token which will be used to reset password.
 
 
@@ -159,8 +195,8 @@ Password reset link wil be sent to an email. Link will contain a token which wil
 http://localhost/reset_password?token=4af52d04c68fb3586a77da00366adfe36870dab10b7ebc4f3847c3e8ce6b9cba
 ```
 
-
-#### Reset password
+[[#Documentation|Back to top]]
+### Reset password
 
 **URL**: `POST` localhost/api/reset_password
 
@@ -180,11 +216,12 @@ type: form-data
 }
 ```
 
-### Roles
+[[#Documentation|Back to top]]
+## Roles
 ---
 Role: `admin`
 
-#### Index roles
+### Index roles
 
 **URL**: `GET` localhost/api/roles
 
@@ -231,7 +268,9 @@ Role: `admin`
 }
 ```
 
-#### Show role
+
+[[#Documentation|Back to top]]
+### Show role
 
 **URL**: `GET` localhost/api/roles/``{id}``
 
@@ -248,7 +287,9 @@ Role: `admin`
 }
 ```
 
-#### Assign roles
+
+[[#Documentation|Back to top]]
+### Assign roles
 
 **URL**: `PUT` localhost/api/roles/assign/``{user_id}``
 
@@ -282,7 +323,9 @@ type: x-www-form-urlencoded
 }
 ```
 
-#### Remove roles
+
+[[#Documentation|Back to top]]
+### Remove roles
 
 **URL**: `PUT` localhost/api/roles/remove/``{user_id}``
 
@@ -309,11 +352,13 @@ type: x-www-form-urlencoded
 }
 ```
 
-### Permission
+
+[[#Documentation|Back to top]]
+## Permission
 ---
 Role: `admin`
 
-#### Index permissions
+### Index permissions
 
 **URL**: `GET` localhost/api/permissions
 
@@ -360,7 +405,9 @@ Role: `admin`
 }
 ```
 
-#### Show permission
+
+[[#Documentation|Back to top]]
+### Show permission
 
 **URL**: `GET` localhost/api/permissions/``{id}``
 
@@ -407,7 +454,9 @@ Role: `admin`
 }
 ```
 
-#### Assign permissions
+
+[[#Documentation|Back to top]]
+### Assign permissions
 
 **URL**: `PUT` localhost/api/permissions/assign/``{user_id}``
 
@@ -443,7 +492,9 @@ type: x-www-form-urlencoded
 }
 ```
 
-#### Remove permissions
+
+[[#Documentation|Back to top]]
+### Remove permissions
 
 **URL**: `PUT` localhost/api/permissions/remove/``{user_id}``
 
@@ -472,10 +523,12 @@ type: x-www-form-urlencoded
 }
 ```
 
-### Users
+
+[[#Documentation|Back to top]]
+## Users
 Role: `admin`
 
-#### Index users
+### Index users
 
 **URL**: `GET` localhost/api/users
 
@@ -514,7 +567,8 @@ Role: `admin`
 ```
 
 
-#### Show user
+[[#Documentation|Back to top]]
+### Show user
 
 **URL**: `GET` localhost/api/users/`{id}`
 
@@ -540,11 +594,41 @@ Role: `admin`
 }
 ```
 
-### Candidates
+
+[[#Documentation|Back to top]]
+## Candidates
 ---
 Permission: `candidate`
 
-#### Index candidates
+### Predefined properties
+###### Courses
+- first stage 1
+- first stage 2
+- first stage 3
+- first stage 4
+- second stage 1
+- second stage 2
+- graduated bachelor
+- graduated masters
+- not studying
+
+###### Statuses
+- candidate
+- called for interview
+- interviewed
+- accepted for internship
+- employed
+- not accepted for internship
+- not employed
+- declined
+- other
+
+###### Genders
+- male
+- female
+
+
+### Index candidates
 Role: `read`
 
 Retrieve a list of all candidates
@@ -553,28 +637,113 @@ Retrieve a list of all candidates
 
 **Query parameters**:
 
-| Parameter        | type(value)                 | Description                                                                                   | Required |
-| ---------------- | --------------------------- | --------------------------------------------------------------------------------------------- | -------- |
-| group_by_academy | int(0 or 1)                 | Specifies whether results should be grouped based on the academy                              | false    |
-| search           | string                      | Search query whose terms try to match candidate `name`, `surnname`,`email`,`phone` properties | false    |
-| date_from        | date                        | Only candidates whose application date is higher or equal will be returned                    | false    |
-| date_to          | date                        | Only candidates whose application date is less than will be returned                          | false    |
-| positions[]      | array\<int(position_id)>    | Only candidates who apply to the specified positions will be returned                         | false    |
-| academy          | int(academy_id)             | Only candidates  who apply to the specified academy will be returned                          | false    |
+| Parameter        | type(value)                | Description                                                                                   | Required |
+| ---------------- | -------------------------- | --------------------------------------------------------------------------------------------- | -------- |
+| group_by_academy | int(0 or 1)                | Specifies whether results should be grouped based on the academy                              | false    |
+| search           | string                     | Search query whose terms try to match candidate `name`, `surnname`,`email`,`phone` properties | false    |
+| date_from        | date                       | Only candidates whose application date is higher or equal will be returned                    | false    |
+| date_to          | date                       | Only candidates whose application date is less than will be returned                          | false    |
+| positions[]      | array\<int(position_id)>   | Only candidates who apply to the specified positions will be returned                         | false    |
+| academy          | int(academy_id)            | Only candidates  who apply to the specified academy will be returned                          | false    |
 | course           | string([course](#Courses)) | Only candidates who apply to the specified course will be returned                            | false    |
 
+**Success response example:**
+```json
+{
+    "candidates": [
+        {
+            "id": 1,
+            "name": "Elton",
+            "surnname": "Dibbert",
+            "gender": "female",
+            "phone": "864210012",
+            "email": "tmills@gmail.com",
+            "application_date": "2021-12-19",
+            "city": "Robelshire",
+            "status": "candidate",
+            "course": "graduated masters",
+            "can_manage_data": "1",
+            "CV": null,
+            "positions": [
+                {
+                    "id": 8,
+                    "name": "web programming",
+                    "abbreviation": null,
+                    "created_at": "2021-12-23 08:01:42"
+                }
+            ],
+            "comments": [],
+            "education_institution": {
+                "id": 2,
+                "name": "Vilnius Gediminas technical university",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            },
+            "academy": {
+                "id": 2,
+                "name": "Internet of things",
+                "abbreviation": "IoT",
+                "created_at": "2021-12-23 08:01:42"
+            }
+        },
+		]
+}
+```
 
-#### Show candidate
+
+[[#Documentation|Back to top]]
+### Show candidate
 Role: `read`
 
-Retrieves candidate
-
-**URL**: `GET` localhost/api/candidates/{id}
+**URL**: `GET` localhost/api/candidates/``{id}``
 
 **Query parameters**: None
 
-#### Store candidate
+**Success response example:**
+```json
+{
+    "candidate": {
+        "id": 1,
+        "name": "Elton",
+        "surnname": "Dibbert",
+        "gender": "female",
+        "phone": "864210012",
+        "email": "tmills@gmail.com",
+        "application_date": "2021-12-19",
+        "city": "Robelshire",
+        "status": "candidate",
+        "course": "graduated masters",
+        "can_manage_data": "1",
+        "CV": null,
+        "positions": [
+            {
+                "id": 11,
+                "name": "electronics engineering",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            }
+        ],
+        "comments": [],
+        "education_institution": {
+            "id": 2,
+            "name": "Vilnius Gediminas technical university",
+            "abbreviation": null,
+            "created_at": "2021-12-23 08:01:42"
+        },
+        "academy": {
+            "id": 2,
+            "name": "Internet of things",
+            "abbreviation": "IoT",
+            "created_at": "2021-12-23 08:01:42"
+        }
+    }
+}
+```
 
+
+[[#Documentation|Back to top]]
+### Store candidate
+Role: `create`
 **URL**: `POST` localhost/api/candidate
 
 **Body parameters**:
@@ -598,8 +767,51 @@ type: form-data
 | comment                  | string                                            | -                                                   | false    |
 | phone                    | string                                            | -                                                   | false    |
 |                          |                                                   |                                                     |          |
+**Success response example:**
+```json
+{
+    "message": "Candidate saved successfully",
+    "candidate": {
+        "id": 11,
+        "name": "Jonas",
+        "surnname": "Jonaitis",
+        "gender": "male",
+        "phone": null,
+        "email": "jonas@gmail.com",
+        "application_date": "2021-10-07",
+        "city": "Kaunas",
+        "status": "called for interview",
+        "course": "first stage 3",
+        "can_manage_data": "1",
+        "CV": null,
+        "positions": [
+            {
+                "id": 1,
+                "name": "Negotiation skills",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            }
+        ],
+        "comments": [],
+        "education_institution": {
+            "id": 2,
+            "name": "Vilnius Gediminas technical university",
+            "abbreviation": null,
+            "created_at": "2021-12-23 08:01:42"
+        },
+        "academy": {
+            "id": 1,
+            "name": "Business to business",
+            "abbreviation": "B2B",
+            "created_at": "2021-12-23 08:01:42"
+        }
+    }
+}
+```
 
-#### Update candidate
+
+[[#Documentation|Back to top]]
+### Update candidate
 Role: `update`
 
 **URL**: `POST` localhost/api/candidate/{id}
@@ -626,8 +838,52 @@ type: form-data
 | phone                    | string                                            | -                                                                                                                                          | false    |
 | method                   | string('PUT')                                     | Laravel doesn't accept form-data with `PUT` request, which is needed to work with files. Specifying this param as such act as a workaround | true     |
 
-#### Candidate import
-Role: `post`
+**Success response example:**
+```json
+{
+    "message": "Candidate updated successfully",
+    "candidate": {
+        "id": 1,
+        "name": "Elton",
+        "surnname": "Dibbert",
+        "gender": "female",
+        "phone": "864210012",
+        "email": "tmills@gmail.com",
+        "application_date": "2021-12-19",
+        "city": "Robelshire",
+        "status": "candidate",
+        "course": "graduated masters",
+        "can_manage_data": "1",
+        "CV": null,
+        "positions": [
+            {
+                "id": 7,
+                "name": "embedded programming",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            }
+        ],
+        "comments": [],
+        "education_institution": {
+            "id": 2,
+            "name": "Vilnius Gediminas technical university",
+            "abbreviation": null,
+            "created_at": "2021-12-23 08:01:42"
+        },
+        "academy": {
+            "id": 2,
+            "name": "Internet of things",
+            "abbreviation": "IoT",
+            "created_at": "2021-12-23 08:01:42"
+        }
+    }
+}
+```
+
+
+[[#Documentation|Back to top]]
+### Candidate import
+Role: `create`
 
 Imports candidate data from csv. Example file candidate_import_example.csv stored in project files.
 
@@ -639,46 +895,135 @@ type: form-data
 | Parameter      | type(value) | Description                                                                                               | Required |
 | -------------- | ----------- | --------------------------------------------------------------------------------------------------------- | -------- |
 | candidate_data | file.csv    | Candidate properties must be defined according to the same rules as in [store candiate](#Store-candidate) | true     |
-|                |             |                                                                                                           |          |
-|                |             |                                                                                                           |          |
 
-#### Export CV
+
+**Success response example:**
+```json
+[
+    {
+        "message": "Candidate saved successfully",
+        "candidate": {
+            "id": 12,
+            "name": "John Michael Stevenson",
+            "surnname": "Turner",
+            "gender": "male",
+            "phone": "867765081",
+            "email": "ihansen@yahoo.com",
+            "application_date": "2021-11-01",
+            "city": "Paoloberg",
+            "status": "candidate",
+            "course": "second stage 1",
+            "can_manage_data": "1",
+            "CV": "CVs/pvuTsSw9mV9uSqlFqNb5a8KFScUTd3QZPDkEqJVw.pdf",
+            "positions": [
+                {
+                    "id": 2,
+                    "name": "Sales techniques",
+                    "abbreviation": null,
+                    "created_at": "2021-12-23 08:01:42"
+                },
+            ],
+            "comments": [
+                {
+                    "id": 1,
+                    "content": "Moka SQL",
+                    "candidate_id": 12,
+                    "created_at": "2021-12-26 15:48:46",
+                    "updated_at": "2021-12-26 15:48:46"
+                }
+            ],
+            "education_institution": {
+                "id": 1,
+                "name": "Kaunas University of Technology",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            },
+            "academy": {
+                "id": 1,
+                "name": "Business to business",
+                "abbreviation": "B2B",
+                "created_at": "2021-12-23 08:01:42"
+            }
+        }
+    },
+]
+```
+
+
+[[#Documentation|Back to top]]
+### Export CV
 Role: `read`
 
-Retrieves  candidate CV file.pdf
+Retrieves  candidate CV in `file_name.pdf`
 
-**URL**: `GET` localhost/api/candidate/{id}/export_cv
+**URL**: `GET` localhost/api/candidate/``{id}``/export_cv
 
 **Query parameters**: None
 
-#### Export candidates
+
+### Export candidates
 Role: `read`
 
-Retrieves  all candidates in file.xlsr
+Retrieves  all candidates data in  `file_name.xlsr`
 
 **URL**: `GET` localhost/api/candidates/export
 
 **Query parameters**: None
 
-### Education institution
+## Education institution
 ---
 Permission: `education_institution`
-#### Index education institutions
+### Index education institutions
+Role: `read`
 Retrieves a list of all education institutions
 
 **URL**: `GET` localhost/api/education_institutions
 
 **Query parameters**: None
+**Success response example:**
+```json
+{
+    "education_institutions": [
+        {
+            "id": 1,
+            "name": "Kaunas University of Technology",
+            "abbreviation": null,
+            "created_at": "2021-12-23 08:01:42"
+        },
+        {
+            "id": 2,
+            "name": "Vilnius Gediminas technical university",
+            "abbreviation": null,
+            "created_at": "2021-12-23 08:01:42"
+        }
+    ]
+}
+```
 
-#### Show education institution
+[[#Documentation|Back to top]]
+### Show education institution
 Retrieves education institutiton
+Role: `read`
 
-**URL**: `GET` localhost/api/education_institutions/{id}
+**URL**: `GET` localhost/api/education_institutions/``{id}``
 
 **Query parameters**: None
+**Success response example:**
+```json
+{
+    "education_institution": {
+        "id": 1,
+        "name": "Kaunas University of Technology",
+        "abbreviation": null,
+        "created_at": "2021-12-23 08:01:42"
+    }
+}
+```
 
-#### Store education institution
 
+[[#Documentation|Back to top]]
+### Store education institution
+Role: `create`
 **URL**: `POST` localhost/api/education_institution
 
 **Body parameters**:
@@ -689,8 +1034,23 @@ type: form-data|x-www-form-urlencoded
 | name         | string      | -           | true     |
 | abbreviation | string      | -           | false    | 
 
-#### Update education institution
+**Success response example:**
+```json
+{
+    "message": "Education institution saved successfully",
+    "education_institution": {
+        "name": "Vilniaus Kolegija",
+        "abbreviation": "VK",
+        "created_at": "2021-12-26 16:09:34",
+        "id": 4
+    }
+}
+```
 
+
+[[#Documentation|Back to top]]
+### Update education institution
+Role: `update`
 **URL**: `PUT` localhost/api/education_institution/{id}
 
 **Body parameters**:
@@ -701,29 +1061,125 @@ type: x-www-form-urlencoded
 | name         | string      | -           | false    |
 | abbreviation | string      | -           | false    | 
 
-### Academy
+```json
+{
+    "message": "Education institution updated successfully",
+    "education_institution": {
+        "id": 1,
+        "name": "Kaunas University of Technology",
+        "abbreviation": "KTU",
+        "created_at": "2021-12-23 08:01:42"
+    }
+}
+```
+
+
+[[#Documentation|Back to top]]
+## Academy
 ---
-#### Index academies
+Permission: `academy`
+
+### Index academies
+Role: `read`
 Retrieve a list of all academies
 
 **URL**: `GET` localhost/api/academies
 
 **Query parameters**: None
 
-#### Show academy
+```json
+{
+    "academies": [
+        {
+            "id": 1,
+            "name": "Business to business",
+            "abbreviation": "B2B",
+            "created_at": "2021-12-23 08:01:42"
+        },
+        {
+            "id": 2,
+            "name": "Internet of things",
+            "abbreviation": "IoT",
+            "created_at": "2021-12-23 08:01:42"
+        }
+    ]
+}
+```
+
+
+
+[[#Documentation|Back to top]]
+### Show academy
+Role: `read`
 Retrieves academy
 
-**URL**: `GET` localhost/api/academies/{id}
+**URL**: `GET` localhost/api/academies/``{id}``
+```json
+{
+    "academy": {
+        "id": 1,
+        "name": "Business to business",
+        "abbreviation": "B2B",
+        "created_at": "2021-12-23 08:01:42"
+    }
+}
+```
 
-**Query parameters**: None
 
-#### Show academy positions
+[[#Documentation|Back to top]]
+### Show academy positions
+Role: `read`
 Retrieves academy with positions
 
-**URL**: `GET` localhost/api/academy/{id}/positions
+**URL**: `GET` localhost/api/academy/``{id}``/positions
 
-**Query parameters**: None
-#### Store academy
+```json
+{
+    "academy": {
+        "id": 1,
+        "name": "Business to business",
+        "abbreviation": "B2B",
+        "created_at": "2021-12-23 08:01:42",
+        "positions": [
+            {
+                "id": 1,
+                "name": "Negotiation skills",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            },
+            {
+                "id": 2,
+                "name": "Sales techniques",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            },
+            {
+                "id": 3,
+                "name": "objections overcoming skills",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            },
+            {
+                "id": 4,
+                "name": "presentations: tool for selling ideas",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            },
+            {
+                "id": 5,
+                "name": "business communication skills",
+                "abbreviation": null,
+                "created_at": "2021-12-23 08:01:42"
+            }
+        ]
+    }
+}
+```
+
+
+[[#Documentation|Back to top]]
+### Store academy
+Role: `create`
 
 **URL**: `POST` localhost/api/academy
 
@@ -735,9 +1191,23 @@ type: form-data|x-www-form-urlencoded
 | name         | string      | -           | true     |
 | abbreviation | string      | -           | false    | 
 
-#### Update academy
+```json
+{
+    "message": "Academy saved successfully",
+    "academy": {
+        "name": "Teltonika IT networks",
+        "abbreviation": "TIN",
+        "created_at": "2021-12-26 20:33:12",
+        "id": 3
+    }
+}
+```
 
-**URL**: `PUT` localhost/api/academy/{id}
+
+[[#Documentation|Back to top]]
+### Update academy
+Role: `update`
+**URL**: `PUT` localhost/api/academy/``{id}``
 
 **Body parameters**:
 type: x-www-form-urlencoded
@@ -746,25 +1216,89 @@ type: x-www-form-urlencoded
 | ------------ | ----------- | ----------- | -------- |
 | name         | string      | -           | false    |
 | abbreviation | string      | -           | false    |
-|              |             |             |          |
-### Positions
----
-#### Index positions
-Retrieve a list of all positions
 
+```json
+{
+    "message": "Academy updated successfully",
+    "academy": {
+        "id": 3,
+        "name": "Academy Of Gentelments",
+        "abbreviation": "TIN",
+        "created_at": "2021-12-26 20:33:12"
+    }
+}
+```
+
+
+[[#Documentation|Back to top]]
+## Positions
+---
+Permissions; `position`
+### Index positions
+Role: `read`
 **URL**: `GET` localhost/api/positions
 
 **Query parameters**: None
 
-#### Show position
-Retrieves positions
+```json
+{
+    "positions": [
+        {
+            "id": 1,
+            "name": "Negotiation skills",
+            "abbreviation": null,
+            "created_at": "2021-12-23 08:01:42",
+            "academies": [
+                {
+                    "id": 1,
+                    "name": "Business to business",
+                    "abbreviation": "B2B",
+                    "created_at": "2021-12-23 08:01:42"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Sales techniques",
+            "abbreviation": null,
+            "created_at": "2021-12-23 08:01:42",
+            "academies": [
+                {
+                    "id": 1,
+                    "name": "Business to business",
+                    "abbreviation": "B2B",
+                    "created_at": "2021-12-23 08:01:42"
+                }
+            ]
+        }
+    ]
+}
+```
 
-**URL**: `GET` localhost/api/positions/{id}
+
+
+[[#Documentation|Back to top]]
+### Show position
+Role: `read`
+**URL**: `GET` localhost/api/positions/``{id}``
 
 **Query parameters**: None
 
-#### Store position
+```json
+{
+    "position": {
+        "id": 1,
+        "name": "Negotiation skills",
+        "abbreviation": null,
+        "created_at": "2021-12-23 08:01:42"
+    }
+}
+```
 
+
+[[#Documentation|Back to top]]
+### Store position
+Role: `create`
 **URL**: `POST` localhost/api/academy
 
 **Body parameters**:
@@ -776,8 +1310,30 @@ type: form-data|x-www-form-urlencoded
 | abbreviation | string                 | -           | false    |
 | academies[]  | array<int(academy_id)> | -           | true     | 
 
-#### Update academy
+```json
+{
+    "message": "Position saved successfully",
+    "position": {
+        "id": 12,
+        "name": "Artificial intelligence",
+        "abbreviation": "AI",
+        "created_at": "2021-12-26 20:42:42",
+        "academies": [
+            {
+                "id": 2,
+                "name": "Internet of things",
+                "abbreviation": "IoT",
+                "created_at": "2021-12-23 08:01:42"
+            }
+        ]
+    }
+}
+```
 
+
+[[#Documentation|Back to top]]
+### Update academy
+Role: `update`
 **URL**: `PUT` localhost/api/academy/{id}
 
 **Body parameters**:
@@ -789,13 +1345,34 @@ type: x-www-form-urlencoded
 | abbreviation | string                 | -           | false    |
 | academies[]  | array<int(academy_id)> | -           | false    | 
 
+```json
+{
+    "message": "Position updated successfully",
+    "position": {
+        "id": 12,
+        "name": "Machine Learning",
+        "abbreviation": "ML",
+        "created_at": "2021-12-26 20:42:42",
+        "academies": [
+            {
+                "id": 2,
+                "name": "Internet of things",
+                "abbreviation": "IoT",
+                "created_at": "2021-12-23 08:01:42"
+            }
+        ]
+    }
+}
+```
 
-### Academy statistic
+
+[[#Documentation|Back to top]]
+## Academy statistic
 ---
-Role: `Read`
-Permission: `Statistic`
+Role: `read`
+Permission: `statistic`
 
-#### Index statistic by position
+### Index statistic by position
 
 **URL**: `GET` localhost/academies/statistic/position
 
@@ -870,7 +1447,8 @@ Permission: `Statistic`
 ```
 
 
-#### Show statistic by position
+[[#Documentation|Back to top]]
+### Show statistic by position
 
 **URL**: `GET` localhost/academies/``{id}``/statistic/position
 
@@ -912,7 +1490,8 @@ Permission: `Statistic`
 ```
 
 
-#### Index statistic by education institution
+[[#Documentation|Back to top]]
+### Index statistic by education institution
 
 **URL**: `GET` localhost/api/academies/statistic/education_institution
 
@@ -959,7 +1538,10 @@ Permission: `Statistic`
 ]
 ```
 
-#### Show statistic by education institution
+
+
+[[#Documentation|Back to top]]
+### Show statistic by education institution
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/education_institution
 
@@ -988,7 +1570,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Index statistic by gender
+
+[[#Documentation|Back to top]]
+### Index statistic by gender
 
 **URL**: `GET` localhost/api/academies/statistic/gender
 
@@ -1035,7 +1619,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Show statistic by gender
+
+[[#Documentation|Back to top]]
+### Show statistic by gender
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/gender
 
@@ -1064,7 +1650,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Index statistic by course
+
+[[#Documentation|Back to top]]
+### Index statistic by course
 
 **URL**: `GET` localhost/api/academies/statistic/course
 
@@ -1167,7 +1755,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Show statistic by course
+
+[[#Documentation|Back to top]]
+### Show statistic by course
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/course
 
@@ -1224,7 +1814,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Index statistic by status
+
+[[#Documentation|Back to top]]
+### Index statistic by status
 
 **URL**: `GET` localhost/api/academies/statistic/status
 
@@ -1327,7 +1919,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Show statistic by status
+
+[[#Documentation|Back to top]]
+### Show statistic by status
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/status
 
@@ -1384,7 +1978,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Index statistic by application date
+
+[[#Documentation|Back to top]]
+### Index statistic by application date
 
 **URL**: `GET` localhost/api/academies/statistic/application_date
 
@@ -1452,7 +2048,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Show statistic by application date
+
+[[#Documentation|Back to top]]
+### Show statistic by application date
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/application_date
 
@@ -1497,7 +2095,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Index statistic by month
+
+[[#Documentation|Back to top]]
+### Index statistic by month
 
 **URL**: `GET` localhost/api/academies/statistic/month/`{month_number}`
 
@@ -1565,7 +2165,9 @@ Permission: `Statistic`
 ]
 ```
 
-#### Show statistic by month
+
+[[#Documentation|Back to top]]
+### Show statistic by month
 
 **URL**: `GET` localhost/api/academies/``{id}``/statistic/month/`{month_number}`
 
@@ -1707,3 +2309,5 @@ Permission: `Statistic`
 ]
 ```
 
+
+[[#Documentation|Back to top]]

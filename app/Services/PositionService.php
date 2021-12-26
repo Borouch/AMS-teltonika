@@ -52,7 +52,7 @@ class PositionService
 
         $position = Position::find($position->id);
         $position->academies = $position->academies()->get();
-        return response()->json(['message' => 'Position stored successfully', 'position' => $position], 200);
+        return response()->json(['message' => 'Position saved successfully', 'position' => $position], 200);
     }
 
 

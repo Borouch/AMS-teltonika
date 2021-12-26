@@ -83,7 +83,7 @@ class ValidationUtilities
             'group_by_academy.in' => 'Field must be either 0 or 1',
             'positions.*.in' =>
                 'Position does not exist it or does not belong to the academy to which candidate is applying',
-            'course.in' => 'No course with such id exists',
+            'course.in' => 'No such course exists',
             'academy.in' => 'No academy with such id exists',
             'can_manage_data.in' => 'Field must be either 0 or 1',
             'gender.in' => 'No such gender exists',

@@ -32,8 +32,8 @@ class AcademyUpdateRequest extends FormRequest
         $academiesId = Academy::all()->map(fn($ac) => $ac->id);
         return [
             'academy_id' => 'required|' . Rule::in($academiesId),
-            'name' => 'nullable|Letter_space|unique:academy,name|min:2',
-            'abbreviation' => 'nullable|Letter_num_space|unique:academy,abbreviation|min:2',
+            'name' => 'nullable|Letter_space|unique:academies,name|min:2',
+            'abbreviation' => 'nullable|Letter_num_space|unique:academies,abbreviation|min:2',
 
         ];
     }

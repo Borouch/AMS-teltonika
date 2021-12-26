@@ -43,6 +43,7 @@ class AcademyController extends Controller
      */
     public function update(AcademyUpdateRequest $request, int $academyId)
     {
+
         return AcademyService::updateAcademy($request, $academyId);
     }
 

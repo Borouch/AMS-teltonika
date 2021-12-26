@@ -47,6 +47,7 @@ class AcademyService
             $academy->update(['name' => $request->input('name')]);
         }
         if ($request->filled('abbreviation')) {
+            $hasValue = true;
             $academy->update(['abbreviation' => $request->input('abbreviation')]);
         }
         if (!$hasValue) {

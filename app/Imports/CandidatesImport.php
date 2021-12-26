@@ -126,7 +126,7 @@ class CandidatesImport implements WithHeadingRow, WithCustomCsvSettings
             'name' => 'required|Letter_space|min:2',
             'surnname' => 'required|Letter_space|min:2',
             'city' => 'required|Letter_space|min:2',
-            'comments' => 'nullable',
+            'comment' => 'nullable',
             'gender' => 'required|' . Rule::in(Candidate::GENDERS),
             'email' => 'required|email',
             'application_date' => 'required|date',

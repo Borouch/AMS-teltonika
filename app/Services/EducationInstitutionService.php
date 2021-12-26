@@ -59,8 +59,8 @@ class EducationInstitutionService
         }
         $edu->save();
         return response()->json([
-            'message' => '
-            Education institution saved successfully',
+            'message' =>
+                'Education institution saved successfully',
             'education_institution' => $edu
         ], 200);
     }

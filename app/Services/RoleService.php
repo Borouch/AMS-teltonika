@@ -20,7 +20,7 @@ class RoleService
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'read']);
         Role::create(['name' => 'update']);
-        Role::create(['name' => 'write']);
+        Role::create(['name' => 'create']);
         Role::create(['name' => 'delete']);
     }
 

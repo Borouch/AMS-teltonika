@@ -96,7 +96,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [];
+        $roles = $this->roles()->get()->map(fn($r) => $r->id);
+        $permissions = $this->permissions()->get()->map(fn($p) => $p->id);
+
+        return ['roles' => $roles, 'permissions' => $permissions];
     }
 
 
@@ -119,7 +122,6 @@ class User extends Authenticatable implements JWTSubject
         $permissions->makeHidden('pivot');
         if (!is_iterable($permissions)) {
             $permissions->mergeCasts($this->casts);
-
         } else {
             foreach ($permissions as $permission) {
                 $permission->mergeCasts($this->casts);
